@@ -49,3 +49,5 @@ mvn \
   -Dproxy.datastore.horreum.url=http://localhost:18088 \
   quarkus:dev
 ```
+
+Then you can load the repository configuration using `./scripts/config/setup_config.sh`

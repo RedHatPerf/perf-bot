@@ -1,4 +1,4 @@
-package io.perf.tools.bot.handler.rest;
+package io.perf.tools.bot.handler;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.perf.tools.bot.service.datastore.horreum.HorreumService;

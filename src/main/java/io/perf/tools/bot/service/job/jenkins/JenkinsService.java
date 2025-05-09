@@ -5,7 +5,7 @@ import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueReference;
 import io.perf.tools.bot.model.JobDef;
 import io.perf.tools.bot.model.ProjectConfig;
-import io.perf.tools.bot.service.ConfigResolver;
+import io.perf.tools.bot.service.ConfigService;
 import io.perf.tools.bot.service.job.JobRunner;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class JenkinsService implements JobRunner {
 
     @Inject
-    ConfigResolver configResolver;
+    ConfigService configService;
 
     @Inject
     JenkinsServer jenkinsServer;
@@ -25,7 +25,7 @@ public class JenkinsService implements JobRunner {
     @Override
     public void buildJob(String repoFullName, String jobId, Map<String, String> params) {
         Log.info("Building job " + jobId + " for " + repoFullName);
-        ProjectConfig config = configResolver.getConfig(repoFullName);
+        ProjectConfig config = configService.getConfig(repoFullName);
         JobDef jobDef = config.jobs.get(jobId);
 
         try {

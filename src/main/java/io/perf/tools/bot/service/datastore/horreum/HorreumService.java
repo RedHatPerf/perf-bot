@@ -6,7 +6,7 @@ import io.hyperfoil.tools.horreum.api.data.LabelValueMap;
 import io.hyperfoil.tools.horreum.api.services.ExperimentService;
 import io.hyperfoil.tools.horreum.api.services.RunService;
 import io.perf.tools.bot.model.ProjectConfig;
-import io.perf.tools.bot.service.ConfigResolver;
+import io.perf.tools.bot.service.ConfigService;
 import io.perf.tools.bot.service.datastore.ResultStore;
 import io.perf.tools.bot.service.datastore.horreum.util.ExperimentResultConverter;
 import io.perf.tools.bot.service.datastore.horreum.util.LabelValueMapConverter;
@@ -23,7 +23,7 @@ public class HorreumService implements ResultStore {
     String horreumUrl;
 
     @Inject
-    ConfigResolver configResolver;
+    ConfigService configService;
 
     @Inject
     LabelValueMapConverter labelValueMapConverter;
@@ -35,7 +35,7 @@ public class HorreumService implements ResultStore {
     public String getRun(String repo, String repositoryUrl, int horreumRunId) {
         check(repo, repositoryUrl);
 
-        ProjectConfig config = configResolver.getConfig(repo);
+        ProjectConfig config = configService.getConfig(repo);
         try (HorreumClient client = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
                 .build()) {
             List<ExportedLabelValues> labelValues = client.runService.getRunLabelValues(horreumRunId, null, null, null, 1000, 0,
@@ -53,7 +53,7 @@ public class HorreumService implements ResultStore {
     @Override
     public String compare(String repo, String repositoryUrl, int horreumRunId) {
         check(repo, repositoryUrl);
-        ProjectConfig config = configResolver.getConfig(repo);
+        ProjectConfig config = configService.getConfig(repo);
         try (HorreumClient client = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
                 .build()) {
             RunService.RunExtended run = client.runService.getRun(horreumRunId);
@@ -66,7 +66,7 @@ public class HorreumService implements ResultStore {
     }
 
     private void check(String repo, String repositoryUrl) {
-        if (!configResolver.getConfigs().containsKey(repo) || !configResolver.getConfig(repo).repository.equals(
+        if (!configService.getConfigs().containsKey(repo) || !configService.getConfig(repo).repository.equals(
                 repositoryUrl)) {
             throw new RuntimeException("Trying to get data for test " + repo + " from " + repositoryUrl);
         }

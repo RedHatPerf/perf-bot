@@ -1,4 +1,4 @@
-package io.perf.tools.bot.handler.github;
+package io.perf.tools.bot.handler;
 
 import io.perf.tools.bot.service.PullRequestService;
 import io.quarkiverse.githubapp.event.IssueComment;
@@ -7,7 +7,7 @@ import org.kohsuke.github.GHEventPayload;
 
 import java.io.IOException;
 
-public class GithubPullRequestCheck {
+public class GithubEventHandler {
 
     @Inject
     PullRequestService pullRequestService;

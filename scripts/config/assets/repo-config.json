@@ -1,0 +1,13 @@
+{
+  "id": "lampajr/horreum-app-integration-example",
+  "repository": "https://github.com/lampajr/horreum-app-integration-example",
+  "description": "First example showing Github - Horreum integration",
+  "horreumTestId": 10,
+  "horreumKey": "CHANGE_ME",
+  "jobs": {
+    "test": {
+      "name": "test",
+      "jenkinsJob": "AppIntegrationExample"
+    }
+  }
+}
