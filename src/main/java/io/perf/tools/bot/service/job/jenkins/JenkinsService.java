@@ -11,6 +11,7 @@ import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.io.IOException;
 import java.util.Map;
 
 @ApplicationScoped
@@ -23,25 +24,23 @@ public class JenkinsService implements JobRunner {
     JenkinsServer jenkinsServer;
 
     @Override
-    public void buildJob(String repoFullName, String jobId, Map<String, String> params) {
-        Log.info("Building job " + jobId + " for " + repoFullName);
-        ProjectConfig config = configService.getConfig(repoFullName);
-        JobDef jobDef = config.jobs.get(jobId);
-
-        try {
-            JobWithDetails jenkinsJob = jenkinsServer.getJob(jobDef.jenkinsJob);
-
-            QueueReference queueReference;
-            if (params.isEmpty()) {
-                queueReference = jenkinsJob.build(Map.of());
-            } else {
-                queueReference = jenkinsJob.build(params);
-            }
-            Log.info("Building job " + jobDef.name + " " + queueReference.getQueueItemUrlPart());
-        } catch (Exception e) {
-            Log.error("Something went wrong", e);
-            throw new RuntimeException(e);
+    public String buildJob(String configId, String jobId, Map<String, String> params) throws IOException {
+        Log.info("Building job " + jobId + " for " + configId);
+        ProjectConfig config = configService.getConfig(configId);
+        if (config == null) {
+            throw new IllegalArgumentException("Config not found with `" + configId + "`");
         }
-        Log.info("build completed");
+
+        JobDef jobDef = config.jobs.get(jobId);
+        JobWithDetails jenkinsJob = jenkinsServer.getJob(jobDef.jenkinsJob);
+
+        QueueReference queueReference;
+        if (params.isEmpty()) {
+            queueReference = jenkinsJob.build(Map.of());
+        } else {
+            queueReference = jenkinsJob.build(params);
+        }
+
+        return queueReference.getQueueItemUrlPart();
     }
 }

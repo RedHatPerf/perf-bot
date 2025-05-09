@@ -6,7 +6,11 @@
   "horreumKey": "CHANGE_ME",
   "jobs": {
     "test": {
-      "name": "test",
+      "name": "My test v1",
+      "jenkinsJob": "AppIntegrationExample"
+    },
+    "another-test": {
+      "name": "My test v2",
       "jenkinsJob": "AppIntegrationExample"
     }
   }

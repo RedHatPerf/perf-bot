@@ -43,9 +43,8 @@ public class HorreumWebhookResource {
         // if so, we will get it and send back the results to the original pull request
         Log.info("Received webhook: " + payload.toString());
         String repoFullName = payload.get("data").get("info").get("repo_full_name").asText();
-        String repoUrl = payload.get("data").get("info").get("repo_url").asText();
         int pullRequestNumber = payload.get("data").get("info").get("pull_request").asInt();
-        int runId = payload.get("id").asInt();
+        String runId = payload.get("id").asText();
 
         StringBuilder comment = new StringBuilder();
         try {
@@ -55,10 +54,10 @@ public class HorreumWebhookResource {
             comment.append("## Job results ").append(runId).append("\n");
 
             comment.append("### Label values").append("\n\n")
-                    .append(horreumService.getRun(repoFullName, repoUrl, runId)).append("\n\n");
+                    .append(horreumService.getRun(repoFullName, runId)).append("\n\n");
 
             comment.append("### Baseline comparison").append("\n\n")
-                    .append(horreumService.compare(repoFullName, repoUrl, runId));
+                    .append(horreumService.compare(repoFullName, runId));
 
             issue.comment(comment.toString());
         } catch (IOException e) {
