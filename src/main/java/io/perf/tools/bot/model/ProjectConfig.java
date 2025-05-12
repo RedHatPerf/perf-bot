@@ -3,6 +3,7 @@ package io.perf.tools.bot.model;
 import java.util.Map;
 
 public class ProjectConfig {
+    // the id is the repository full name
     public String id;
     public String repository;
     public String horreumTestId;

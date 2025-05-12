@@ -24,4 +24,8 @@ public class ConfigService {
     public ProjectConfig getConfig(String repoFullName) {
         return configs.get(repoFullName);
     }
+
+    public ProjectConfig getConfigByTestId(String testId) {
+        return configs.values().stream().filter(pc -> pc.horreumTestId.equals(testId)).findFirst().orElse(null);
+    }
 }

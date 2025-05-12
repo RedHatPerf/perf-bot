@@ -34,6 +34,18 @@ public class HorreumService implements ResultStore {
     @Inject
     ExperimentResultConverter experimentResultConverter;
 
+    public LabelValueMap getRun(ProjectConfig config, String horreumRunId) {
+
+        try (HorreumClient client = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
+                .build()) {
+            List<ExportedLabelValues> labelValues = client.runService.getRunLabelValues(Integer.parseInt(horreumRunId), null, null, null, 1000, 0,
+                        null, null, false);
+            // assuming we have one single dataset
+            // TODO: implement validation on the result to return meaningful errors in case something is not expected
+            return labelValues.getFirst().values;
+        }
+    }
+
     @Override
     public String getRun(String repo, String horreumRunId) {
 

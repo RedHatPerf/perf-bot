@@ -1,9 +1,8 @@
 {
   "access": "PUBLIC",
   "owner": "dev-team",
-  "id": 10,
-  "name": "AppIntegrationExample",
-  "description": "Example of Github repository integration - https://github.com/lampajr/horreum-app-integration-example",
+  "name": "getting-started",
+  "description": "",
   "datastoreId": null,
   "timelineLabels": [],
   "fingerprintLabels": [],
@@ -13,32 +12,32 @@
     {
       "id": 1,
       "testId": 10,
-      "name": "99.999",
+      "name": "max_response_time",
       "order": 0,
       "labels": [
-        "99_999"
+        "gs.max_response_time"
       ],
       "changeDetection": [
-        {
-          "id": 2,
-          "model": "relativeDifference",
-          "config": {
-            "model": "relativeDifference",
-            "filter": "mean",
-            "window": 1,
-            "threshold": 0.2,
-            "minPrevious": 2
-          }
-        },
         {
           "id": 1,
           "model": "relativeDifference",
           "config": {
             "model": "relativeDifference",
             "filter": "mean",
-            "window": 2,
+            "window": 1,
+            "threshold": 0.2,
+            "minPrevious": 1
+          }
+        },
+        {
+          "id": 2,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 5,
             "threshold": 0.1,
-            "minPrevious": 2
+            "minPrevious": 5
           }
         }
       ]
@@ -46,23 +45,12 @@
     {
       "id": 2,
       "testId": 10,
-      "name": "Avg",
+      "name": "99_99_response_time",
       "order": 1,
       "labels": [
-        "avg"
+        "gs.percentile_99_99"
       ],
       "changeDetection": [
-        {
-          "id": 3,
-          "model": "relativeDifference",
-          "config": {
-            "model": "relativeDifference",
-            "filter": "mean",
-            "window": 2,
-            "threshold": 0.1,
-            "minPrevious": 2
-          }
-        },
         {
           "id": 4,
           "model": "relativeDifference",
@@ -71,7 +59,18 @@
             "filter": "mean",
             "window": 1,
             "threshold": 0.2,
-            "minPrevious": 2
+            "minPrevious": 5
+          }
+        },
+        {
+          "id": 3,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 5,
+            "threshold": 0.1,
+            "minPrevious": 5
           }
         }
       ]
@@ -79,32 +78,131 @@
     {
       "id": 3,
       "testId": 10,
-      "name": "99.9",
+      "name": "99_9_response_time",
       "order": 2,
       "labels": [
-        "99_9"
+        "gs.percentile_99_9"
       ],
       "changeDetection": [
-        {
-          "id": 5,
-          "model": "relativeDifference",
-          "config": {
-            "model": "relativeDifference",
-            "filter": "mean",
-            "window": 1,
-            "threshold": 0.2,
-            "minPrevious": 2
-          }
-        },
         {
           "id": 6,
           "model": "relativeDifference",
           "config": {
             "model": "relativeDifference",
             "filter": "mean",
-            "window": 2,
+            "window": 1,
+            "threshold": 0.2,
+            "minPrevious": 5
+          }
+        },
+        {
+          "id": 5,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 5,
             "threshold": 0.1,
-            "minPrevious": 2
+            "minPrevious": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "testId": 10,
+      "name": "99_response_time",
+      "order": 4,
+      "labels": [
+        "gs.percentile_99"
+      ],
+      "changeDetection": [
+        {
+          "id": 8,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 5,
+            "threshold": 0.1,
+            "minPrevious": 5
+          }
+        },
+        {
+          "id": 7,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 1,
+            "threshold": 0.2,
+            "minPrevious": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "testId": 10,
+      "name": "mean_response_time",
+      "order": 5,
+      "labels": [
+        "gs.mean_response_time"
+      ],
+      "changeDetection": [
+        {
+          "id": 10,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 1,
+            "threshold": 0.2,
+            "minPrevious": 5
+          }
+        },
+        {
+          "id": 9,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 5,
+            "threshold": 0.1,
+            "minPrevious": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "testId": 10,
+      "name": "std_dev_response_time",
+      "order": 5,
+      "labels": [
+        "gs.std_dev_response_time"
+      ],
+      "changeDetection": [
+        {
+          "id": 12,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 1,
+            "threshold": 0.2,
+            "minPrevious": 1
+          }
+        },
+        {
+          "id": 11,
+          "model": "relativeDifference",
+          "config": {
+            "model": "relativeDifference",
+            "filter": "mean",
+            "window": 5,
+            "threshold": 0.1,
+            "minPrevious": 5
           }
         }
       ]
@@ -114,71 +212,76 @@
   "experiments": [
     {
       "id": 1,
-      "name": "PullRequestComparisonV1",
+      "name": "Pull Request Experiment",
       "testId": 10,
       "selectorLabels": [
-        "is_pr"
+        "gs.app_commit"
       ],
-      "selectorFilter": "isPr => isPr",
+      "selectorFilter": "value => value != \"main\"",
       "baselineLabels": [
-        "is_pr"
+        "gs.app_commit"
       ],
-      "baselineFilter": "isPr => !isPr",
+      "baselineFilter": "value => value == \"main\"",
       "comparisons": [
         {
           "model": "relativeDifference",
           "config": {
             "threshold": 0.1,
             "greaterBetter": false,
-            "maxBaselineDatasets": 0
+            "maxBaselineDatasets": 1
           },
           "variableId": 1,
-          "variableName": "99.999"
+          "variableName": "max_response_time"
         },
         {
           "model": "relativeDifference",
           "config": {
             "threshold": 0.1,
             "greaterBetter": false,
-            "maxBaselineDatasets": 0
+            "maxBaselineDatasets": 1
           },
           "variableId": 2,
-          "variableName": "Avg"
+          "variableName": "99_99_response_time"
         },
         {
           "model": "relativeDifference",
           "config": {
             "threshold": 0.1,
             "greaterBetter": false,
-            "maxBaselineDatasets": 0
+            "maxBaselineDatasets": 1
           },
           "variableId": 3,
-          "variableName": "99.9"
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "name": "PullRequestComparisonV2",
-      "testId": 10,
-      "selectorLabels": [
-        "source_branch"
-      ],
-      "selectorFilter": "sourceBranch => sourceBranch !== \"main\"",
-      "baselineLabels": [
-        "source_branch"
-      ],
-      "baselineFilter": "sourceBranch => sourceBranch === \"main\"",
-      "comparisons": [
+          "variableName": "99_9_response_time"
+        },
         {
           "model": "relativeDifference",
           "config": {
             "threshold": 0.1,
             "greaterBetter": false,
-            "maxBaselineDatasets": 0
+            "maxBaselineDatasets": 1
           },
-          "variableId": 2,
-          "variableName": "Avg"
+          "variableId": 4,
+          "variableName": "99_response_time"
+        },
+        {
+          "model": "relativeDifference",
+          "config": {
+            "threshold": 0.1,
+            "greaterBetter": false,
+            "maxBaselineDatasets": 1
+          },
+          "variableId": 5,
+          "variableName": "mean_response_time"
+        },
+        {
+          "model": "relativeDifference",
+          "config": {
+            "threshold": 0.1,
+            "greaterBetter": false,
+            "maxBaselineDatasets": 1
+          },
+          "variableId": 6,
+          "variableName": "std_dev_response_time"
         }
       ]
     }

@@ -8,7 +8,8 @@ API=${API:-"http://localhost:8080/api"}
 
 HORREUM_BOOTSTRAP_PWD=${HORREUM_BOOTSTRAP_PWD:-"secret"}
 HORREUM_TEST_ID=${HORREUM_TEST_ID:-""}
-HORREUM_TEST_NAME=${HORREUM_TEST_NAME:-"AppIntegrationExample"}
+HORREUM_TEST_NAME=${HORREUM_TEST_NAME:-"getting-started"}
+HORREUM_SCHEMA_URI=${HORREUM_SCHEMA_URI:-"uri:getting-started:0.1"}
 
 KEYCLOAK_URL=$( curl -k -s $API/config/keycloak | jq -r '.url')
 TOKEN=$(curl -s -X POST "$KEYCLOAK_URL"/realms/horreum/protocol/openid-connect/token \
@@ -36,10 +37,5 @@ fi
 
 echo "==== Uploading run ===="
 echo ""
-curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.info.start&stop=$.info.stop&owner=dev-team&access=PUBLIC" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/baseline_1.json
-curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.info.start&stop=$.info.stop&owner=dev-team&access=PUBLIC" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/baseline_2.json
-#curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.info.start&stop=$.info.stop&owner=dev-team&access=PUBLIC" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/run_2.json
-#curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.info.start&stop=$.info.stop&owner=dev-team&access=PUBLIC" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/run_3.json
-#curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.info.start&stop=$.info.stop&owner=dev-team&access=PUBLIC" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/run_4.json
-#curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.info.start&stop=$.info.stop&owner=dev-team&access=PUBLIC" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/run_5.json
-#curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.info.start&stop=$.info.stop&owner=dev-team&access=PUBLIC" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/run_6.json
+curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.timestamps.start&stop=$.timestamps.stop&owner=dev-team&access=PUBLIC&schema=${HORREUM_SCHEMA_URI}" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/baseline_1.json
+#curl $API"/run/data?test=${HORREUM_TEST_NAME}&start=$.timestamps.start&stop=$.timestamps.stop&owner=dev-team&access=PUBLIC&schema=${HORREUM_SCHEMA_URI}" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/assets/run_1.json

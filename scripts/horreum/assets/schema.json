@@ -1,148 +1,267 @@
 {
   "access": "PUBLIC",
   "owner": "dev-team",
-  "uri": "uri:gh-integration-example:0.1",
-  "name": "Github Integration Example",
+  "id": 1,
+  "uri": "uri:getting-started:0.1",
+  "name": "Getting Started v0.1",
+  "description": "Getting Started quarkus application Horreum schema",
   "labels": [
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "RPS",
+      "id": 1,
+      "name": "gs.request_count",
       "extractors": [
         {
-          "name": "rps",
-          "jsonpath": "$.latencies.rps.value",
+          "name": "gs_request_count",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.requestCount",
           "isarray": false
         }
       ],
       "filtering": false,
-      "metrics": true
+      "metrics": true,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "99_999",
+      "id": 2,
+      "name": "gs.percentile_90",
       "extractors": [
         {
-          "name": "99_999",
-          "jsonpath": "$.latencies.\"99_999\".value",
+          "name": "gs_percentile_90",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.percentileResponseTime.\"90.0\"",
           "isarray": false
         }
       ],
       "filtering": false,
-      "metrics": true
+      "metrics": true,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "99_99",
+      "id": 3,
+      "name": "gs.percentile_99",
       "extractors": [
         {
-          "name": "99_99",
-          "jsonpath": "$.latencies.\"99_99\".value",
+          "name": "gs_percentile_99",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.percentileResponseTime.\"99.0\"",
           "isarray": false
         }
       ],
       "filtering": false,
-      "metrics": true
+      "metrics": true,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "99_9",
+      "id": 4,
+      "name": "gs.percentile_99_99",
       "extractors": [
         {
-          "name": "99_9",
-          "jsonpath": "$.latencies.\"99_9\".value",
+          "name": "gs_percentile_99_99",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.percentileResponseTime.\"99.99\"",
           "isarray": false
         }
       ],
       "filtering": false,
-      "metrics": true
+      "metrics": true,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "avg",
+      "id": 5,
+      "name": "gs.errors",
       "extractors": [
         {
-          "name": "avg",
-          "jsonpath": "$.latencies.avg.value",
+          "name": "gs_errors",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.info.errors",
+          "isarray": false
+        }
+      ],
+      "_function": "errors => errors.length",
+      "filtering": false,
+      "metrics": true,
+      "schemaId": 1
+    },
+    {
+      "access": "PUBLIC",
+      "owner": "dev-team",
+      "id": 6,
+      "name": "gs.percentile_50",
+      "extractors": [
+        {
+          "name": "gs_percentile_50",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.percentileResponseTime.\"50.0\"",
           "isarray": false
         }
       ],
       "filtering": false,
-      "metrics": true
+      "metrics": true,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "max",
+      "id": 7,
+      "name": "gs.percentile_99_9",
       "extractors": [
         {
-          "name": "max",
-          "jsonpath": "$.latencies.max.value",
+          "name": "gs_percentile_99_9",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.percentileResponseTime.\"99.9\"",
           "isarray": false
         }
       ],
       "filtering": false,
-      "metrics": true
+      "metrics": true,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "pr",
+      "id": 8,
+      "name": "gs.failures",
       "extractors": [
         {
-          "name": "pr",
-          "jsonpath": "$.info.pull_request",
+          "name": "gs_failures",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.failures",
+          "isarray": false
+        }
+      ],
+      "filtering": false,
+      "metrics": true,
+      "schemaId": 1
+    },
+    {
+      "access": "PUBLIC",
+      "owner": "dev-team",
+      "id": 9,
+      "name": "gs.phase",
+      "extractors": [
+        {
+          "name": "gs_phase_name",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").name",
           "isarray": false
         }
       ],
       "filtering": true,
-      "metrics": false
+      "metrics": false,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "is_pr",
+      "id": 10,
+      "name": "gs.app_commit",
       "extractors": [
         {
-          "name": "is_pr",
-          "jsonpath": "$.info.is_pull_request",
+          "name": "gs_app_commit",
+          "jsonpath": "$.state.APP_COMMIT",
           "isarray": false
         }
       ],
       "filtering": true,
-      "metrics": false
+      "metrics": false,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "target_branch",
+      "id": 11,
+      "name": "gs.max_response_time",
       "extractors": [
         {
-          "name": "target_branch",
-          "jsonpath": "$.info.target_branch",
+          "name": "gs_max_response_time",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.maxResponseTime",
           "isarray": false
         }
       ],
-      "filtering": true,
-      "metrics": false
+      "filtering": false,
+      "metrics": true,
+      "schemaId": 1
     },
     {
       "access": "PUBLIC",
       "owner": "dev-team",
-      "name": "source_branch",
+      "id": 12,
+      "name": "gs.min_response_time",
       "extractors": [
         {
-          "name": "source_branch",
-          "jsonpath": "$.info.source_branch",
+          "name": "gs_min_response_time",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.minResponseTime",
+          "isarray": false
+        }
+      ],
+      "filtering": false,
+      "metrics": true,
+      "schemaId": 1
+    },
+    {
+      "access": "PUBLIC",
+      "owner": "dev-team",
+      "id": 13,
+      "name": "gs.mean_response_time",
+      "extractors": [
+        {
+          "name": "gs_mean_response_time",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.meanResponseTime",
+          "isarray": false
+        }
+      ],
+      "filtering": false,
+      "metrics": true,
+      "schemaId": 1
+    },
+    {
+      "access": "PUBLIC",
+      "owner": "dev-team",
+      "id": 14,
+      "name": "gs.std_dev_response_time",
+      "extractors": [
+        {
+          "name": "gs_std_dev_response_time",
+          "jsonpath": "$.state.*.HF_REPORT_ALL.stats[*] ? (@.name!=\"warmUp\").total.summary.stdDevResponseTime",
+          "isarray": false
+        }
+      ],
+      "filtering": false,
+      "metrics": true,
+      "schemaId": 1
+    },
+    {
+      "access": "PUBLIC",
+      "owner": "dev-team",
+      "id": 15,
+      "name": "pb.repo_full_name",
+      "extractors": [
+        {
+          "name": "pb_repo_full_name",
+          "jsonpath": "$.state.REPO_FULL_NAME",
           "isarray": false
         }
       ],
       "filtering": true,
-      "metrics": false
+      "metrics": false,
+      "schemaId": 1
+    },
+    {
+      "access": "PUBLIC",
+      "owner": "dev-team",
+      "id": 16,
+      "name": "pb.pull_request_number",
+      "extractors": [
+        {
+          "name": "pb_pull_request_number",
+          "jsonpath": "$.state.PULL_REQUEST_NUMBER",
+          "isarray": false
+        }
+      ],
+      "filtering": true,
+      "metrics": false,
+      "schemaId": 1
     }
   ],
   "transformers": []

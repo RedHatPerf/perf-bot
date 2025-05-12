@@ -1,6 +1,6 @@
 {
-  "id": "lampajr/horreum-app-integration-example",
-  "repository": "https://github.com/lampajr/horreum-app-integration-example",
+  "id": "lampajr/webhook-umb-example",
+  "repository": "https://github.com/lampajr/webhook-umb-example",
   "description": "First example showing Github - Horreum integration",
   "horreumTestId": 10,
   "horreumKey": "CHANGE_ME",
