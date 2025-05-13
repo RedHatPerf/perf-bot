@@ -1,0 +1,22 @@
+FROM mirror.gcr.io/jenkins/jenkins:2.509-rhel-ubi9-jdk21
+ARG TARGET_ARCH=x86_64
+ARG YQ_TARGET_ARCH=amd64
+ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false -Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true"
+ENV CASC_JENKINS_CONFIG /var/jenkins_home/casc.yaml
+USER root
+RUN rpm -i https://dl.fedoraproject.org/pub/epel/9/Everything/${TARGET_ARCH}/Packages/i/inotify-tools-3.22.1.0-1.el9.${TARGET_ARCH}.rpm
+RUN rpm -i https://dl.fedoraproject.org/pub/epel/9/Everything/${TARGET_ARCH}/Packages/g/git-crypt-0.7.0-1.el9.${TARGET_ARCH}.rpm
+RUN dnf install -y jq libxslt maven procps-ng rsync nodejs xmlstarlet && dnf clean all
+RUN mvn -version
+RUN java -version
+RUN mkdir -p /opt/tools && chown jenkins /opt/tools
+RUN curl -s -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_${YQ_TARGET_ARCH} -o /usr/bin/yq && chmod a+x /usr/bin/yq
+USER jenkins
+COPY jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
+RUN cat /usr/share/jenkins/ref/plugins.txt | xargs jenkins-plugin-cli --plugins
+RUN curl -s https://repo1.maven.org/maven2/io/hyperfoil/tools/qDup/0.9.0/qDup-0.9.0-uber.jar -o /opt/tools/qDup.jar
+RUN curl -s https://repo1.maven.org/maven2/io/hyperfoil/tools/parse/0.3.1/parse-0.3.1.jar -o /opt/tools/parse.jar
+#COPY --chown=jenkins:jenkins --chmod=400 ssh /var/jenkins_home/.ssh
+COPY --chown=jenkins:jenkins jenkins/casc.yaml /var/jenkins_home/casc.yaml
+COPY --chown=jenkins:jenkins jenkins/start_jenkins.sh /var/jenkins_home/start_jenkins.sh
+CMD [ "/var/jenkins_home/start_jenkins.sh" ]

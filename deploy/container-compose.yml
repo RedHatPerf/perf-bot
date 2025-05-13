@@ -1,0 +1,146 @@
+version: '3.8'
+
+services:
+  jenkins:
+    container_name: local.jenkins
+    labels:
+      env: "local"
+    build:
+      # We must pass whole current dir as context to map ssh folder
+      dockerfile: jenkins/Containerfile
+    image: "localenv/jenkins"
+    ports:
+      - "18080:8080"    # for UI
+      - "41337:31337"
+      - "50000:50000"   # for Jenkins agents
+    volumes:
+      - "${XDG_RUNTIME_DIR}/podman/podman.sock:/run/user/1000/podman/podman.sock"
+      - "./ssh:/var/jenkins_home/.ssh:ro${SE_LINUX_SUFFIX:-,Z}"
+    security_opt:
+      - "label=disable"
+
+  postgres:
+    image: mirror.gcr.io/library/postgres:16
+    container_name: local.horreum-db
+    labels:
+      env: "local"
+    networks:
+      - local_default
+    environment:
+      POSTGRES_DB: horreum
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: secret
+      PGDATABASE: horreum
+      PGUSER: appuser
+      PGPASSWORD: secret
+    ports:
+      - "15432:5432"
+    volumes:
+      - local_horreum_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      retries: 5
+      start_period: 5s
+      timeout: 10s
+
+  amqp:
+    image: quay.io/artemiscloud/activemq-artemis-broker:1.0.22
+    container_name: local.horreum-amq
+    labels:
+      env: "local"
+    networks:
+      - local_default
+    environment:
+      AMQ_USER: horreum
+      AMQ_PASSWORD: secret
+    ports:
+      - "18161:8161"
+      - "61616:61616"
+      - "15672:5672"
+    volumes:
+      - ./horreum/broker.xml:/opt/amq/conf/broker.xml:Z
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.3
+    container_name: local.horreum-keycloak
+    entrypoint: /opt/keycloak/bin/kc.sh
+    command:
+      - -Dquarkus.http.http2=false
+      - start-dev
+      - --health-enabled=true
+      - --import-realm
+    labels:
+      env: "local"
+    networks:
+      - local_default
+    environment:
+      KC_DB_URL: jdbc:postgresql://local.horreum-db/horreum
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: secret
+      KEYCLOAK_LOGLEVEL: INFO
+      KC_CACHE: local
+      KC_DB: postgres
+      KC_DB_USERNAME: appuser
+      KC_DB_PASSWORD: secret
+      KC_HTTP_ENABLED: "true"
+      KC_HTTP_PORT: 8180
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "18180:8180"
+    volumes:
+      - ./horreum/:/opt/keycloak/data/import:Z
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8180;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
+      interval: 2s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
+
+  horreum:
+    image: quay.io/hyperfoil/horreum:local
+    container_name: local.horreum-app
+    labels:
+      env: "local"
+    networks:
+      - local_default
+    environment:
+      HORREUM_INTERNAL_URL: http://local.horreum-app:8080
+      HORREUM_URL: http://localhost:18088
+      QUARKUS_LOG_LEVEL: INFO
+      QUARKUS_LOG_CATEGORY__IO_HYPERFOIL_TOOLS_HORREUM__LEVEL: INFO
+      QUARKUS_LAUNCH_DEVMODE: false
+      QUARKUS_HTTP_HTTP2: false
+      QUARKUS_OIDC_TOKEN_ISSUER: any
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://local.horreum-db:5432/horreum?sslmode=disable
+      QUARKUS_DATASOURCE_MIGRATION_JDBC_URL: jdbc:postgresql://local.horreum-db:5432/horreum?sslmode=disable
+      QUARKUS_DATASOURCE_MIGRATION_USERNAME: appuser
+      QUARKUS_DATASOURCE_USERNAME: appuser
+      QUARKUS_DATASOURCE_PASSWORD: secret
+      QUARKUS_OIDC_AUTH_SERVER_URL: http://local.horreum-keycloak:8180/realms/horreum
+      HORREUM_KEYCLOAK_URL: http://localhost:18180
+      QUARKUS_KEYCLOAK_ADMIN_CLIENT_SERVER_URL: http://local.horreum-keycloak:8180
+      QUARKUS_KEYCLOAK_ADMIN_CLIENT_REALM: horreum
+      QUARKUS_OIDC_CREDENTIALS_SECRET: "myawesomesecret"
+      QUARKUS_KEYCLOAK_ADMIN_CLIENT_CLIENT_SECRET: "myawesomesecret"
+      AMQP_INTERNAL_HOST: local.horreum-amq
+    ports:
+      - "18088:8080"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+        required: true
+      amqp:
+        condition: service_started
+
+volumes:
+  jenkins_home:
+  local_horreum_db:
+
+
+networks:
+  local_default:
+    name: local_default

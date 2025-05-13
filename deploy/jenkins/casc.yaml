@@ -1,0 +1,36 @@
+unclassified:
+  horreumGlobalConfig:
+    baseUrl: "http://local.horreum-app:8080"
+    retries: "5, 10, 30, 60, 120"
+  location:
+    url: http://127.0.0.1:18080/
+  lockableResourcesManager:
+    declaredResources:
+      - description: "The only resource in this instance"
+        labels: "lab1 lab2"
+        name: "singleton"
+jenkins:
+  numExecutors: 1
+  labelString: "lab1 lab2"
+  quietPeriod: 0
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: JAVA
+            value: /opt/java/openjdk/bin/java
+          - key: QDUP_JAR
+            value: /opt/tools/qDup.jar
+          - key: PARSE_JAR
+            value: /opt/tools/parse.jar
+          - key: SCRIPT_REPO
+            value: /mnt/repo
+  # default admin user
+  securityRealm:
+    local:
+      users:
+        - id: admin
+          password: secret
+  crumbIssuer:
+    strict:
+      checkSessionMatch: false
+      xorMasking: false
