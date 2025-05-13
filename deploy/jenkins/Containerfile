@@ -16,6 +16,9 @@ COPY jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN cat /usr/share/jenkins/ref/plugins.txt | xargs jenkins-plugin-cli --plugins
 RUN curl -s https://repo1.maven.org/maven2/io/hyperfoil/tools/qDup/0.9.0/qDup-0.9.0-uber.jar -o /opt/tools/qDup.jar
 RUN curl -s https://repo1.maven.org/maven2/io/hyperfoil/tools/parse/0.3.1/parse-0.3.1.jar -o /opt/tools/parse.jar
+COPY --chown=jenkins:jenkins jenkins/setup-token.groovy /var/jenkins_home/init.groovy.d/setup-token.groovy
+COPY --chown=jenkins:jenkins jenkins/setup-job.groovy /var/jenkins_home/setup-job.groovy
+COPY --chown=jenkins:jenkins jenkins/job.Jenkinsfile /var/jenkins_home/job.Jenkinsfile
 #COPY --chown=jenkins:jenkins --chmod=400 ssh /var/jenkins_home/.ssh
 COPY --chown=jenkins:jenkins jenkins/casc.yaml /var/jenkins_home/casc.yaml
 COPY --chown=jenkins:jenkins jenkins/start_jenkins.sh /var/jenkins_home/start_jenkins.sh

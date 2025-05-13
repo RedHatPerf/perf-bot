@@ -85,43 +85,15 @@
       {
         "id": "ef65f920-8806-4131-9cf2-317a8889863c",
         "name": "tester",
-        "description": "Pemits to add/modify tests and schemas",
+        "description": "Permits to add/modify tests and schemas",
         "composite": false,
         "clientRole": false,
         "containerId": "horreum",
         "attributes": {}
       },
       {
-        "id": "ec52160f-fc7e-4417-8a52-ff9bddcf4a8c",
-        "name": "dev-manager",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "horreum",
-        "attributes": {}
-      },
-      {
-        "id": "2eeef23e-34a9-442e-b875-25a1353a3e27",
-        "name": "dev-viewer",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "horreum",
-        "attributes": {}
-      },
-      {
-        "id": "0f14ee45-6ca5-4d25-a11c-1272cd82b559",
-        "name": "dev-tester",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "horreum",
-        "attributes": {}
-      },
-      {
-        "id": "d5d74541-e3c4-4a17-87d7-44c960af87de",
-        "name": "dev-uploader",
-        "description": "",
+        "id": "o6c2at5t-6bf3-1356-567c-c333f46c108e",
+        "name": "manager",
         "composite": false,
         "clientRole": false,
         "containerId": "horreum",

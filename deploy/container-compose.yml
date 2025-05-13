@@ -45,7 +45,7 @@ services:
       timeout: 10s
 
   amqp:
-    image: quay.io/artemiscloud/activemq-artemis-broker:1.0.22
+    image: quay.io/artemiscloud/activemq-artemis-broker:1.0.32
     container_name: local.horreum-amq
     labels:
       env: "local"
@@ -126,6 +126,7 @@ services:
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_REALM: horreum
       QUARKUS_OIDC_CREDENTIALS_SECRET: "myawesomesecret"
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_CLIENT_SECRET: "myawesomesecret"
+      AMQP_HOST: local.horreum-amq
       AMQP_INTERNAL_HOST: local.horreum-amq
     ports:
       - "18088:8080"
@@ -135,6 +136,20 @@ services:
         required: true
       amqp:
         condition: service_started
+
+# TODO: use another service to initialize the Horreum data and create the Jenkins credential if possible
+# Use fetch-keys to get the bootstrap user pwd and jenkins apiKey
+# Use existing scripts to populate the Horreum and print the generate Horreum API key
+#  init:
+#    image: mirror.gcr.io/dwdraju/alpine-curl-jq
+#    container_name: local.horreum-init
+#    labels:
+#      env: "local"
+#    networks:
+#      - local_default
+#    depends_on:
+#      horreum:
+#        condition: service_started
 
 volumes:
   jenkins_home:

@@ -7,6 +7,7 @@ CWD="$(dirname "$0")"
 API=${API:-"http://localhost:8080/api"}
 
 HORREUM_BOOTSTRAP_PWD=${HORREUM_BOOTSTRAP_PWD:-"secret"}
+HORREUM_BOOTSTRAP_USER=${HORREUM_BOOTSTRAP_USER:-"horreum.bootstrap"}
 HORREUM_TEST_ID=${HORREUM_TEST_ID:-""}
 HORREUM_TEST_NAME=${HORREUM_TEST_NAME:-"getting-started"}
 HORREUM_SCHEMA_URI=${HORREUM_SCHEMA_URI:-"uri:getting-started:0.1"}
@@ -14,7 +15,7 @@ HORREUM_SCHEMA_URI=${HORREUM_SCHEMA_URI:-"uri:getting-started:0.1"}
 KEYCLOAK_URL=$( curl -k -s $API/config/keycloak | jq -r '.url')
 TOKEN=$(curl -s -X POST "$KEYCLOAK_URL"/realms/horreum/protocol/openid-connect/token \
     -H 'content-type: application/x-www-form-urlencoded' \
-    -d "username=horreum.bootstrap&password=${HORREUM_BOOTSTRAP_PWD}&grant_type=password&client_id=horreum-ui" \
+    -d "username=${HORREUM_BOOTSTRAP_USER}&password=${HORREUM_BOOTSTRAP_PWD}&grant_type=password&client_id=horreum-ui" \
     | jq -r .access_token)
 
 echo "==== Getting API key ===="

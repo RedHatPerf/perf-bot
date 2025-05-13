@@ -34,3 +34,5 @@ jenkins:
     strict:
       checkSessionMatch: false
       xorMasking: false
+jobs:
+  - file: /var/jenkins_home/setup-job.groovy
