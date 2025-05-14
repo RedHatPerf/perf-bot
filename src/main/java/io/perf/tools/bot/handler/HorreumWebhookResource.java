@@ -39,8 +39,9 @@ public class HorreumWebhookResource {
     @POST
     @ResponseStatus(204)
     @Produces(MediaType.APPLICATION_JSON)
-    // TODO: can we use Run object here?
-    public void webhook(ObjectNode payload) {
+    // TODO: instead of relying on Horreum webhook we could simply let Jenkins call this endpoint with some required information
+    // e.g., job result, horreum run id, pull request number and repo full name
+    public void webhook(ObjectNode payload) throws InterruptedException {
         // when a new run is uploaded to Horreum we will check whether we have an existing "start benchmark" event in the queue
         // if so, we will get it and send back the results to the original pull request
         Log.debug("Received webhook: " + payload.toString());
@@ -58,6 +59,8 @@ public class HorreumWebhookResource {
         // fetch the Horreum run labelValues limiting the values to the pull request number, repo full name
         // TODO: we could filter and include only those labels we are interested in
         LabelValueMap labelValueMap = horreumService.getRun(config, runId);
+        // TODO: creating label values is async and could take time - we should not rely on this
+        Thread.sleep(1000);
         String runRepoFullName = labelValueMap.get(REPO_FULL_NAME_LABEL_VALUE).asText();
         int pullRequestNumber = labelValueMap.get(PULL_REQUEST_NUMBER_LABEL_VALUE).asInt();
 

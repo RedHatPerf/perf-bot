@@ -3,7 +3,7 @@ unclassified:
     baseUrl: "http://local.horreum-app:8080"
     retries: "5, 10, 30, 60, 120"
   location:
-    url: http://127.0.0.1:18080/
+    url: http://local.jenkins:8080/
   lockableResourcesManager:
     declaredResources:
       - description: "The only resource in this instance"

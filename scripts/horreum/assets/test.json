@@ -293,7 +293,7 @@
       "type": "http",
       "config": {
         "type": "http",
-        "url": "http://localhost:8081/horreum"
+        "url": "http://local.perf-bot:8081/horreum"
       },
       "secrets": {},
       "testId": 10,
