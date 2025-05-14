@@ -171,6 +171,13 @@ pipeline {
     options {
         timeout(time: 15, unit: 'MINUTES')
     }
+    parameters {
+        string(
+            name: 'PULL_REQUEST_NUMBER',
+            defaultValue: '1',
+            description: 'Pull request number',
+        )
+    }
     stages {
         stage('run') {
             steps {

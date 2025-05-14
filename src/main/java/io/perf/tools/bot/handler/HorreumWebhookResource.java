@@ -58,9 +58,9 @@ public class HorreumWebhookResource {
         String repoFullName = config.id;
         // fetch the Horreum run labelValues limiting the values to the pull request number, repo full name
         // TODO: we could filter and include only those labels we are interested in
+        Thread.sleep(2000);
         LabelValueMap labelValueMap = horreumService.getRun(config, runId);
         // TODO: creating label values is async and could take time - we should not rely on this
-        Thread.sleep(1000);
         String runRepoFullName = labelValueMap.get(REPO_FULL_NAME_LABEL_VALUE).asText();
         int pullRequestNumber = labelValueMap.get(PULL_REQUEST_NUMBER_LABEL_VALUE).asInt();
 

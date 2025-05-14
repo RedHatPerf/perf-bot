@@ -7,7 +7,13 @@
   "jobs": {
     "local-test": {
       "name": "My local test",
-      "jenkinsJob": "getting-started"
+      "jenkinsJob": "getting-started",
+      "configurableParams": {
+        "PULL_REQUEST_NUMBER": {
+          "name": "PULL_REQUEST_NUMBER",
+          "defaultValue": "1"
+        }
+      }
     }
   }
 }

@@ -36,7 +36,7 @@ public class JenkinsService implements JobRunner {
 
         QueueReference queueReference;
 
-        if (params.isEmpty()) {
+        if (jobDef.configurableParams.isEmpty()) {
             queueReference = jenkinsJob.build();
         } else {
             queueReference = jenkinsJob.build(params);
