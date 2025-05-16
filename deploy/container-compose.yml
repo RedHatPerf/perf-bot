@@ -101,13 +101,14 @@ services:
       timeout: 20s
 
   horreum:
-    image: quay.io/hyperfoil/horreum:local
+    image: quay.io/hyperfoil/horreum:dev
     container_name: local.horreum-app
     labels:
       env: "local"
     networks:
       - local_default
     environment:
+      JAVA_OPTIONS: "-Dhorreum.bootstrap.password=secret"
       HORREUM_INTERNAL_URL: http://local.horreum-app:8080
       HORREUM_URL: http://localhost:18088
       QUARKUS_LOG_LEVEL: INFO
@@ -130,6 +131,12 @@ services:
       AMQP_INTERNAL_HOST: local.horreum-amq
     ports:
       - "18088:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e \"GET /q/health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
+      interval: 2s
+      retries: 10
+      start_period: 5s
+      timeout: 20s
     depends_on:
       keycloak:
         condition: service_healthy
@@ -137,21 +144,32 @@ services:
       amqp:
         condition: service_started
 
-# TODO: use another service to initialize the Horreum data and create the Jenkins credential if possible
-# Use fetch-keys to get the bootstrap user pwd and jenkins apiKey
 # Use existing scripts to populate the Horreum and print the generate Horreum API key
-#  init:
-#    image: mirror.gcr.io/dwdraju/alpine-curl-jq
-#    container_name: local.horreum-init
-#    labels:
-#      env: "local"
-#    networks:
-#      - local_default
-#    depends_on:
-#      horreum:
-#        condition: service_started
-
-
+  init:
+    image: mirror.gcr.io/dwdraju/alpine-curl-jq
+    container_name: local.horreum-init
+    labels:
+      env: "local"
+    networks:
+      - local_default
+    entrypoint: bash
+    command:
+      - -x
+      - /cwd/init-data.sh
+    environment:
+      KEYCLOAK_HOST: "http://local.horreum-keycloak:8180"
+      HORREUM_HOST: "http://local.horreum-app:8080"
+      HORREUM_BOOTSTRAP_USER: "horreum.bootstrap"
+      HORREUM_BOOTSTRAP_PASSWORD: "secret"
+      JENKINS_HOST: "local.jenkins:8080"
+      JENKINS_USER: "admin"
+      JENKINS_KEY: "11c513a545425a50c202367deefad6ed33"
+    volumes:
+      - ./init:/cwd:Z
+    depends_on:
+      horreum:
+        condition: service_healthy
+        required: true
 
 volumes:
   jenkins_home:

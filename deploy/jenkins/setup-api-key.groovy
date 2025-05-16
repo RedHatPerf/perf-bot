@@ -6,19 +6,18 @@ import com.cloudbees.plugins.credentials.domains.Domain
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl
 import com.cloudbees.plugins.credentials.CredentialsScope
 
-println("Setting up Jenkins api key")
+// Inspired by https://github.com/jenkinsci/configuration-as-code-plugin/issues/1830
+
+def token = '11c513a545425a50c202367deefad6ed33'
+println("Setting up static Jenkins api key: " + token)
 
 // script parameters
 def userName = 'admin'
-def tokenName = 'test-token'
+def tokenName = 'dev-token'
 
 def user = User.get(userName)
-def apiTokenProperty = user.getProperty(ApiTokenProperty.class)
-def result = apiTokenProperty.tokenStore.generateNewToken(tokenName)
+user.getProperty(ApiTokenProperty.class).tokenStore.addFixedNewToken(tokenName, token)
 user.save()
-
-// so that we can use it
-println("Generated Jenkins api key: " + result.plainValue)
 
 instance = Jenkins.instance
 domain = Domain.global()
@@ -27,10 +26,10 @@ store = instance.getExtensionList(
 
 usernameAndPassword = new UsernamePasswordCredentialsImpl(
         CredentialsScope.GLOBAL,
-        "TOKEN_NAME",
+        tokenName,
         "DESCRIPTION",
         userName,
-        result.plainValue
+        token
 )
 
 store.addCredentials(domain, usernameAndPassword)
