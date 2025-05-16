@@ -29,7 +29,7 @@ public class Compare extends BaseAction {
         String runId = comment.length > 2 ? comment[2] : LATEST_RUN;
         try {
             String msg = "## Comparison for " + runId + " against baseline" + "\n\n" + resultStore.compare(
-                    context.getRepository().getFullName(), runId);
+                    context.getProjectConfig().id, runId);
             context.setCurrentResult(ActionResult.success(msg, getName()));
         } catch (Exception e) {
             Log.error("Failed to compare run", e);

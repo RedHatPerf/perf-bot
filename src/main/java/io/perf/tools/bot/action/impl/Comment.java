@@ -48,6 +48,8 @@ public class Comment extends BaseAction {
                     Log.error("Failed to comment issue", e);
                     context.setCurrentResult(ActionResult.failure("Failed to comment issue", getName()));
                 }
+            } else {
+                Log.warn("No comment found");
             }
         }
     }

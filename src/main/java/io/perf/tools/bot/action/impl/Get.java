@@ -28,8 +28,7 @@ public class Get extends BaseAction {
         String[] comment = context.getPayload().getComment().getBody().split(" ");
         String runId = comment.length > 2 ? comment[2] : LATEST_RUN;
         try {
-            String msg = "## Label values for run " + runId + "\n\n" + resultStore.getRun(context.getRepository().getFullName(),
-                    runId);
+            String msg = "## Label values for run " + runId + "\n\n" + resultStore.getRun(context.getProjectConfig().id, runId);
             context.setCurrentResult(ActionResult.success(msg, getName()));
         } catch (Exception e) {
             Log.error("Failed to get run", e);

@@ -4,6 +4,11 @@
   "description": "First example showing Github - Horreum integration",
   "horreumTestId": 10,
   "horreumKey": "CHANGE_ME",
+  "authorizedUsers": [
+    "lampajr",
+    "johnaohara",
+    "barreiro"
+  ],
   "jobs": {
     "local-test": {
       "name": "My local test",

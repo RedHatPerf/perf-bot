@@ -4,8 +4,6 @@ import io.perf.tools.bot.action.ActionContext;
 import io.perf.tools.bot.action.ActionResult;
 import io.perf.tools.bot.action.BaseAction;
 import io.perf.tools.bot.model.JobDef;
-import io.perf.tools.bot.model.ProjectConfig;
-import io.perf.tools.bot.service.ConfigService;
 import io.perf.tools.bot.service.job.JobRunner;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,9 +22,6 @@ public class Run extends BaseAction {
     @Inject
     JobRunner jobRunner;
 
-    @Inject
-    ConfigService configService;
-
     @Override
     public String getName() {
         return NAME;
@@ -38,7 +33,7 @@ public class Run extends BaseAction {
         String[] comment = context.getPayload().getComment().getBody().split(" ");
         String testName = comment[2];
 
-        JobDef job = configService.getConfig(context.getRepository().getFullName()).jobs.get(testName);
+        JobDef job = context.getProjectConfig().jobs.get(testName);
         Map<String, String> params = new HashMap<>();
         Matcher matcher = pattern.matcher(context.getPayload().getComment().getBody());
 
