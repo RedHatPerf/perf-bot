@@ -77,3 +77,7 @@ After that you can load the project/repo configuration in perf-bot by using:
 | Horreum API Key    |       \<created at runtime\>       | This can be fetched using ./scripts/fetch-keys.sh |
 | Keycloak Admin     |               admin                |                                                   |
 | Keycloak Admin Pwd |               secret               |                                                   |
+
+### Hydra UMB bridge setup
+
+One Hydra service account is required to receive UMB messages. UMB broker is configured with `AMQP_HOST` and `AMQP_PORT` properties. AMPQ client should use that account's username and password (`AMQP_USERNAME` and `AMQP_PASSWORD` secrets). Besides that, the TLS key and certificate are also required. Save those as `.certs/service-account.key` and `.certs/service-account.crt` respectively. Most likely the key is encrypted with a password, which is not supported by Vert.x at the moment. It can be decrypted with the command `openssl rsa -in .certs/service-account.key -out service=.certs/account-unencrypted.key`.
