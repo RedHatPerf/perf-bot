@@ -3,8 +3,9 @@
   "repository": "https://github.com/lampajr/webhook-umb-example",
   "description": "First example showing Github - Horreum integration",
   "horreumTestId": 10,
-  "horreumKey": "HUSR_A1E2A0EA_3A70_4592_B04E_22064346B870",
+  "horreumKey": "CHANGE_ME",
   "authorizedUsers": [
+    "lampajr",
     "johnaohara",
     "barreiro"
   ],

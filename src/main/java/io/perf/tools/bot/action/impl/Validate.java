@@ -23,6 +23,12 @@ public class Validate extends BaseAction {
 
     @Override
     public void proceed(ActionContext context) throws IOException {
+        // fail fast if the repository is not configured
+        if (context.getProjectConfig() == null) {
+            context.setCurrentResult(ActionResult.failure("Repository " + context.getRepository().getFullName() + " is not configured!", getName()));
+            return;
+        }
+
         String login = context.getIssue().getUser().getLogin();
         if (context.getProjectConfig().authorizedUsers.contains(login)) {
             context.setCurrentResult(ActionResult.success("User " + login + " authorized", getName()));
