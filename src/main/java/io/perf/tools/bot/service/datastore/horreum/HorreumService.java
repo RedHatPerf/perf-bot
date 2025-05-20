@@ -16,6 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.net.ssl.SSLContext;
 import java.util.List;
 
 @ApplicationScoped
@@ -34,12 +35,21 @@ public class HorreumService implements ResultStore {
     @Inject
     ExperimentResultConverter experimentResultConverter;
 
+    @Inject
+    SSLContext horreumSslContext;
+
+    private HorreumClient createHorreumClient(ProjectConfig config) {
+        HorreumClient.Builder builder = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
+                .sslContext(horreumSslContext);
+        return builder.build();
+    }
+
     public LabelValueMap getRun(ProjectConfig config, String horreumRunId) {
 
-        try (HorreumClient client = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
-                .build()) {
-            List<ExportedLabelValues> labelValues = client.runService.getRunLabelValues(Integer.parseInt(horreumRunId), null, null, null, 1000, 0,
-                        null, null, false);
+        try (HorreumClient client = createHorreumClient(config)) {
+            List<ExportedLabelValues> labelValues = client.runService.getRunLabelValues(Integer.parseInt(horreumRunId), null,
+                    null, null, 1000, 0,
+                    null, null, false);
             // assuming we have one single dataset
             // TODO: implement validation on the result to return meaningful errors in case something is not expected
             return labelValues.getFirst().values;
@@ -50,8 +60,7 @@ public class HorreumService implements ResultStore {
     public String getRun(String repo, String horreumRunId) {
 
         ProjectConfig config = configService.getConfig(repo);
-        try (HorreumClient client = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
-                .build()) {
+        try (HorreumClient client = createHorreumClient(config)) {
             List<ExportedLabelValues> labelValues;
             if (LATEST_RUN.equals(horreumRunId)) {
                 // we need only one run, the latest one
@@ -76,13 +85,13 @@ public class HorreumService implements ResultStore {
     @Override
     public String compare(String repo, String horreumRunId) {
         ProjectConfig config = configService.getConfig(repo);
-        try (HorreumClient client = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
-                .build()) {
+        try (HorreumClient client = createHorreumClient(config)) {
             RunService.RunSummary run;
             if (LATEST_RUN.equals(horreumRunId)) {
                 // we need only one run, the latest one
                 // TODO: I should filter runs by pull request id
-                RunService.RunsSummary summary = client.runService.listTestRuns(Integer.parseInt(config.horreumTestId), false, 1, 1, "id",
+                RunService.RunsSummary summary = client.runService.listTestRuns(Integer.parseInt(config.horreumTestId), false,
+                        1, 1, "id",
                         SortDirection.Descending);
                 run = summary.runs.getFirst();
             } else {

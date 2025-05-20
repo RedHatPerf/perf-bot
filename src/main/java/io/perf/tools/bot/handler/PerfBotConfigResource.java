@@ -13,7 +13,6 @@ import org.jboss.resteasy.reactive.ResponseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/config")
 public class PerfBotConfigResource {
@@ -39,5 +38,4 @@ public class PerfBotConfigResource {
     public List<ProjectConfig> getConfigs() {
         return new ArrayList<>(configService.getConfigs().values());
     }
-
 }

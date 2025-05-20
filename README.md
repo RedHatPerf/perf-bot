@@ -41,6 +41,7 @@ podman run \
   --replace --name local.perf-bot --env-file ".env" \
   --network local_default \ 
   -v /tmp/jenkins-truststore.jks:/tmp/jenkins-truststore.jks:rw,Z \ 
+  -v .certs/:/certs/:rw,Z \
   -e QUARKUS_GITHUB_APP_PRIVATE_KEY=$QUARKUS_GITHUB_APP_PRIVATE_KEY \
  -p 8081:8081 localhost/alampare/perf-bot:0.0.1-SNAPSHOT
 ```
