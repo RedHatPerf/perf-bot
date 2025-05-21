@@ -3,7 +3,7 @@ package io.perf.tools.bot.service.job;
 import java.io.IOException;
 import java.util.Map;
 
-public interface JobRunner {
+public interface JobExecutor {
     /**
      *
      * @param configId configuration id

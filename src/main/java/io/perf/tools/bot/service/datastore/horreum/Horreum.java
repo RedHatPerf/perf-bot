@@ -2,7 +2,9 @@ package io.perf.tools.bot.service.datastore.horreum;
 
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.Startup;
+import io.smallrye.common.annotation.Identifier;
 import jakarta.enterprise.inject.Default;
+import jakarta.inject.Named;
 import jakarta.ws.rs.Produces;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -47,7 +49,7 @@ public class Horreum {
     String trustStorePwd;
 
     @Produces
-    @Default
+    @Identifier("horreumSslContext")
     public SSLContext horreumSslContext() {
         SSLContext sc = null;
         try {

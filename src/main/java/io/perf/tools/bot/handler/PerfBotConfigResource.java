@@ -14,6 +14,22 @@ import org.jboss.resteasy.reactive.ResponseStatus;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * REST resource for managing performance bot project configurations.
+ * <p>
+ * Exposes endpoints for loading and retrieving project configurations via HTTP.
+ * </p>
+ * <ul>
+ *     <li>{@code POST /config} — Loads a new {@link ProjectConfig} into the system.</li>
+ *     <li>{@code GET /config} — Returns all currently loaded configurations.</li>
+ * </ul>
+ * <p>
+ * This resource delegates all configuration logic to the injected {@link ConfigService}.
+ * </p>
+ *
+ * @see ConfigService
+ * @see ProjectConfig
+ */
 @Path("/config")
 public class PerfBotConfigResource {
 
@@ -21,8 +37,9 @@ public class PerfBotConfigResource {
     ConfigService configService;
 
     /**
-     * Load a new project configuration
-     * @param projectConfig project configuration
+     * Loads a new project configuration
+     *
+     * @param projectConfig the configuration to be loaded
      */
     @POST
     @ResponseStatus(201)
@@ -32,6 +49,11 @@ public class PerfBotConfigResource {
         configService.loadConfig(projectConfig);
     }
 
+    /**
+     * Returns all currently loaded project configurations.
+     *
+     * @return list of project configurations
+     */
     @GET
     @ResponseStatus(200)
     @Produces(MediaType.APPLICATION_JSON)

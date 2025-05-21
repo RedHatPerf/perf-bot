@@ -6,7 +6,7 @@ import com.offbytwo.jenkins.model.QueueReference;
 import io.perf.tools.bot.model.JobDef;
 import io.perf.tools.bot.model.ProjectConfig;
 import io.perf.tools.bot.service.ConfigService;
-import io.perf.tools.bot.service.job.JobRunner;
+import io.perf.tools.bot.service.job.JobExecutor;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @ApplicationScoped
-public class JenkinsService implements JobRunner {
+public class JenkinsService implements JobExecutor {
 
     @Inject
     ConfigService configService;

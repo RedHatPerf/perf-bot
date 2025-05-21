@@ -1,6 +1,6 @@
 package io.perf.tools.bot.service.datastore;
 
-public interface ResultStore {
+public interface Datastore {
     /**
      * Retrieve a specific run execution result
      * @param repo repository full name

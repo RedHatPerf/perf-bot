@@ -18,6 +18,13 @@ import org.kohsuke.github.GHIssue;
 
 import java.io.IOException;
 
+/**
+ * REST resource to handle webhook callbacks from Horreum.
+ * <p>
+ * Receives notifications about new benchmark runs and posts results
+ * back to the corresponding GitHub pull request.
+ * </p>
+ */
 @Path("/horreum")
 public class HorreumWebhookResource {
 
@@ -36,6 +43,17 @@ public class HorreumWebhookResource {
     @Inject
     ConfigService configService;
 
+
+    /**
+     * Handles incoming webhook payloads from Horreum.
+     * <p>
+     * Validates the payload, fetches benchmark results, compares baselines,
+     * and posts a comment on the related GitHub pull request.
+     * </p>
+     *
+     * @param payload the JSON payload sent by Horreum webhook
+     * @throws InterruptedException if the thread sleep is interrupted
+     */
     @POST
     @ResponseStatus(204)
     @Produces(MediaType.APPLICATION_JSON)

@@ -8,10 +8,12 @@ import io.hyperfoil.tools.horreum.api.services.ExperimentService;
 import io.hyperfoil.tools.horreum.api.services.RunService;
 import io.perf.tools.bot.model.ProjectConfig;
 import io.perf.tools.bot.service.ConfigService;
-import io.perf.tools.bot.service.datastore.ResultStore;
+import io.perf.tools.bot.service.datastore.Datastore;
 import io.perf.tools.bot.service.datastore.horreum.util.ExperimentResultConverter;
 import io.perf.tools.bot.service.datastore.horreum.util.LabelValueMapConverter;
+import io.quarkus.arc.impl.Identified;
 import io.quarkus.logging.Log;
+import io.smallrye.common.annotation.Identifier;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -20,7 +22,7 @@ import javax.net.ssl.SSLContext;
 import java.util.List;
 
 @ApplicationScoped
-public class HorreumService implements ResultStore {
+public class HorreumService implements Datastore {
     public static final String LATEST_RUN = "latest";
 
     @ConfigProperty(name = "proxy.datastore.horreum.url")
@@ -36,6 +38,7 @@ public class HorreumService implements ResultStore {
     ExperimentResultConverter experimentResultConverter;
 
     @Inject
+    @Identifier("horreumSslContext")
     SSLContext horreumSslContext;
 
     private HorreumClient createHorreumClient(ProjectConfig config) {

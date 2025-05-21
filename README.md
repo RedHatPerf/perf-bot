@@ -6,15 +6,38 @@ This repository contains a GitHub App powered by [Quarkus GitHub App](https://gi
 This Perf Bot GitHub App aims to make it easier to test performance earlier, detect regressions in 
 development and CI, and reduce late-stage surprises or production issues.
 
-## Usage
+> [!WARNING]
+> This project is currently under development, and therefore subject to change in the future.
 
-Check out the [use cases doc](docs/USE_CASES.md) for more information on the implemented interactions.
+## About
 
-TODO: provide some usage examples
+Check out the [architecture docs](docs/architecture/index.md) for more information on the Perf Bot internals and 
+the supported workflows.
 
 ## Commands
 
-TODO: list all available commands
+Here a list of the supported commands
+
+## AMQP Bridge
+
+If you are running behind some private network, and you cannot consume webhook events directly from GitHub, you 
+might be interested in setting up an intermediate _bridge_ that will fetch those events and forward them into a 
+message broker, e.g., ActiveMQ.
+
+For this purpose, we implemented a new handler that will consume the GitHub events from a pre-configured queue.
+
+You will need additional configuration in this case:
+
+* `AMQP_HOST`: The hostname of the AMQP broker
+* `AMQP_PORT`: The port of the AMQP broker
+* `AMQP_USERNAME`: Service account username of the Perf Bot 
+* `AMQP_PASSWORD`: Service account password of the Perf Bot
+
+Additionally, you may need the service account certificates. Save those as
+`.certs/service-account.key`, `.certs/service-account.crt` and `.certs/ca.crt` respectively.
+
+Most likely the key is encrypted  with a password, which is not supported by Vert.x at the moment. 
+It can be decrypted with the command `openssl rsa -in service-account.key -out service-account-unencrypted.key`.
 
 ## Local environment
 
@@ -40,7 +63,6 @@ mvn clean install -DskipTests -DskipITs -Dquarkus.container-image.build=true
 podman run \
   --replace --name local.perf-bot --env-file ".env" \
   --network local_default \ 
-  -v /tmp/jenkins-truststore.jks:/tmp/jenkins-truststore.jks:rw,Z \ 
   -v .certs/:/certs/:rw,Z \
   -e QUARKUS_GITHUB_APP_PRIVATE_KEY=$QUARKUS_GITHUB_APP_PRIVATE_KEY \
  -p 8081:8081 localhost/alampare/perf-bot:0.0.1-SNAPSHOT
@@ -79,6 +101,3 @@ After that you can load the project/repo configuration in perf-bot by using:
 | Keycloak Admin     |               admin                |                                                   |
 | Keycloak Admin Pwd |               secret               |                                                   |
 
-### Hydra UMB bridge setup
-
-One Hydra service account is required to receive UMB messages. UMB broker is configured with `AMQP_HOST` and `AMQP_PORT` properties. AMPQ client should use that account's username and password (`AMQP_USERNAME` and `AMQP_PASSWORD` secrets). Besides that, the TLS key and certificate are also required. Save those as `.certs/service-account.key` and `.certs/service-account.crt` respectively. Most likely the key is encrypted with a password, which is not supported by Vert.x at the moment. It can be decrypted with the command `openssl rsa -in .certs/service-account.key -out service=.certs/account-unencrypted.key`.

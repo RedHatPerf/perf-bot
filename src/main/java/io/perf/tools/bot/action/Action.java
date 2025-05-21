@@ -1,22 +1,40 @@
 package io.perf.tools.bot.action;
 
-import io.perf.tools.bot.action.impl.Help;
-
 import java.io.IOException;
 
 /**
- * Generic command that users can use, either through the GitHub pull request
- * or through other supported entry points
+ * Represents an action that operates on a shared {@link ActionContext}.
+ * <p>
+ * This is a functional interface with a single abstract method {@link #execute(ActionContext)}.
+ * Actions can be chained together using the {@link #then(Action)} method to form a sequence
+ * where each action receives the updated context from the previous one.
  */
+@FunctionalInterface
 public interface Action {
 
     /**
-     * Whether this is an internal actions, and therefore not exposed to the users
-     * @return true if that is internal, false otherwise
+     * Executes this action using the given context.
+     * Implementations typically modify or read data from the context.
+     *
+     * @param ctx the shared context passed through the action chain
      */
-    boolean internal();
+    void execute(ActionContext<?> ctx) throws IOException;
 
-    ActionContext perform(ActionContext context) throws IOException;
-
-    String getName();
+    /**
+     * Returns a composed {@code Action} that performs, in sequence,
+     * this action followed by the {@code next} action.
+     * <p>
+     * When the returned action is executed, it will first invoke this action's
+     * {@code execute} method, then the {@code next} action's {@code execute} method,
+     * passing the same shared context instance.
+     *
+     * @param next the action to execute after this action
+     * @return a composed {@code Action} representing the sequence of this and the next action
+     */
+    default Action then(Action next) {
+        return (ctx) -> {
+            this.execute(ctx);
+            next.execute(ctx);
+        };
+    }
 }
