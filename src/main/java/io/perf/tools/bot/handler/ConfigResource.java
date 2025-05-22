@@ -31,7 +31,7 @@ import java.util.List;
  * @see ProjectConfig
  */
 @Path("/config")
-public class PerfBotConfigResource {
+public class ConfigResource {
 
     @Inject
     ConfigService configService;

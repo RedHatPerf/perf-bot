@@ -1,4 +1,4 @@
-package io.perf.tools.bot.handler;
+package io.perf.tools.bot.handler.event;
 
 import io.perf.tools.bot.service.PerfBotService;
 import io.quarkiverse.githubapp.event.IssueComment;
@@ -18,7 +18,7 @@ import org.kohsuke.github.GHEventPayload;
  * @see PerfBotService
  * @see GHEventPayload.IssueComment
  */
-public class GithubEventHandler {
+public class GitHubEventHandler {
 
     @Inject
     PerfBotService perfBotService;

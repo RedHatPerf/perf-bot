@@ -1,7 +1,8 @@
-package io.perf.tools.bot.handler;
+package io.perf.tools.bot.handler.event;
 
 import io.perf.tools.bot.service.PerfBotService;
 import io.quarkiverse.githubapp.runtime.github.GitHubService;
+import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,9 +15,9 @@ import java.io.IOException;
 import java.io.StringReader;
 
 /**
- * Handler for receiving GitHub webhook events over UMB (Unified Message Bus).
+ * Handler for receiving GitHub webhook events over AMQP channel, e.g., UMB (Unified Message Bus).
  * <p>
- * This class listens to a specific UMB topic for GitHub issue comment events, deserializes the payload,
+ * This class listens to a specific AMQ topic for GitHub issue comment events, deserializes the payload,
  * and forwards it to the {@link PerfBotService} for processing.
  * </p>
  * <p>
@@ -27,7 +28,7 @@ import java.io.StringReader;
  * @see GitHubService
  */
 @ApplicationScoped
-public class UMBHandler {
+public class AmqpEventHandler {
 
     @ConfigProperty(name = "perf.bot.installation.id")
     Long installationId;
@@ -39,12 +40,13 @@ public class UMBHandler {
     PerfBotService perfBotService;
 
     // TODO: Replace hard-coded topic
-    @Incoming("Consumer.app-svc-perf.perf-bot-app.VirtualTopic.external.github.lampajr.webhook-umb-example")
+    @Incoming("amqp-channel")
     public void onComment(String payload) throws IOException {
-        Log.debug("Received UMB:\n" + payload);
+        Log.debug("Received AMQP message:\n" + payload);
 
         GitHub github = gitHubService.getInstallationClient(installationId);
-        GHEventPayload.IssueComment issueComment = github.parseEventPayload(new StringReader(payload), GHEventPayload.IssueComment.class);
+        GHEventPayload.IssueComment issueComment = github.parseEventPayload(new StringReader(payload),
+                GHEventPayload.IssueComment.class);
 
         perfBotService.onGithubComment(issueComment);
     }
