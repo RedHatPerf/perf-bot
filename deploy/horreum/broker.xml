@@ -180,6 +180,16 @@
                     <queue name="run-recalc"/>
                 </anycast>
             </address>
+            <address name="schema-sync">
+                <anycast>
+                    <queue name="schema-sync"/>
+                </anycast>
+            </address>
+            <address name="run-upload">
+                <anycast>
+                    <queue name="run-upload"/>
+                </anycast>
+            </address>
         </addresses>
     </core>
 </configuration>

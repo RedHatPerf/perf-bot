@@ -3,8 +3,6 @@ package io.perf.tools.bot.service.datastore.horreum;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.Startup;
 import io.smallrye.common.annotation.Identifier;
-import jakarta.enterprise.inject.Default;
-import jakarta.inject.Named;
 import jakarta.ws.rs.Produces;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -21,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 
 @Startup
 public class Horreum {
@@ -42,11 +41,11 @@ public class Horreum {
     @ConfigProperty(name = "proxy.datastore.horreum.truststore.trust-all")
     Boolean useTrustAllCerts;
 
-    @ConfigProperty(name = "proxy.datastore.horreum.truststore.file")
-    String trustStoreFile;
+    @ConfigProperty(name = "proxy.datastore.horreum.truststore.file", defaultValue = "")
+    Optional<String> trustStoreFile;
 
     @ConfigProperty(name = "proxy.datastore.horreum.truststore.pwd")
-    String trustStorePwd;
+    Optional<String> trustStorePwd;
 
     @Produces
     @Identifier("horreumSslContext")
@@ -58,9 +57,9 @@ public class Horreum {
                 sc.init(null, trustAllCerts, new SecureRandom());
 
                 SSLContext.setDefault(sc);
-            } else if (trustStoreFile != null && !trustStoreFile.isBlank()) {
+            } else if (trustStoreFile.isPresent() && !trustStoreFile.get().isBlank()) {
                 KeyStore trustStore = KeyStore.getInstance("JKS");
-                trustStore.load(new FileInputStream(trustStoreFile), trustStorePwd.toCharArray());
+                trustStore.load(new FileInputStream(trustStoreFile.get()), trustStorePwd.orElse("").toCharArray());
 
                 // Create SSLContext from truststore
                 sc = SSLContextBuilder.create()

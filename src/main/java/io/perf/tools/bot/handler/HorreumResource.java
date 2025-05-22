@@ -26,7 +26,7 @@ import java.io.IOException;
  * </p>
  */
 @Path("/horreum")
-public class HorreumWebhookResource {
+public class HorreumResource {
 
     private static final String REPO_FULL_NAME_LABEL_VALUE = "pb.repo_full_name";
     private static final String PULL_REQUEST_NUMBER_LABEL_VALUE = "pb.pull_request_number";
