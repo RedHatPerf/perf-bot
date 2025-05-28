@@ -262,6 +262,22 @@
       "filtering": true,
       "metrics": false,
       "schemaId": 1
+    },
+    {
+      "access": "PUBLIC",
+      "owner": "dev-team",
+      "id": 17,
+      "name": "pb.job_id",
+      "extractors": [
+        {
+          "name": "pb_job_id",
+          "jsonpath": "$.state.JOB_ID",
+          "isarray": false
+        }
+      ],
+      "filtering": true,
+      "metrics": false,
+      "schemaId": 1
     }
   ],
   "transformers": []

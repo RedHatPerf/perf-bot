@@ -11,22 +11,15 @@ import io.perf.tools.bot.service.ConfigService;
 import io.perf.tools.bot.service.datastore.Datastore;
 import io.perf.tools.bot.service.datastore.horreum.util.ExperimentResultConverter;
 import io.perf.tools.bot.service.datastore.horreum.util.LabelValueMapConverter;
-import io.quarkus.arc.impl.Identified;
 import io.quarkus.logging.Log;
-import io.smallrye.common.annotation.Identifier;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.net.ssl.SSLContext;
 import java.util.List;
 
 @ApplicationScoped
 public class HorreumService implements Datastore {
     public static final String LATEST_RUN = "latest";
-
-    @ConfigProperty(name = "proxy.datastore.horreum.url")
-    String horreumUrl;
 
     @Inject
     ConfigService configService;
@@ -38,17 +31,26 @@ public class HorreumService implements Datastore {
     ExperimentResultConverter experimentResultConverter;
 
     @Inject
-    @Identifier("horreumSslContext")
-    SSLContext horreumSslContext;
+    HorreumClient.Builder horreumClientBuilder;
 
     private HorreumClient createHorreumClient(ProjectConfig config) {
-        HorreumClient.Builder builder = new HorreumClient.Builder().horreumUrl(horreumUrl).horreumApiKey(config.horreumKey)
-                .sslContext(horreumSslContext);
-        return builder.build();
+        return horreumClientBuilder.horreumApiKey(config.datastoreApiKey).build();
+    }
+
+    @Override
+    public boolean checkConnection(ProjectConfig config) {
+        try (HorreumClient client = createHorreumClient(config)) {
+            // TODO: this is not enough to validate the api key
+            io.hyperfoil.tools.horreum.api.services.ConfigService.VersionInfo info = client.configService.version();
+            Log.info("Connection with Horreum " + info.version + " verified!");
+            return true;
+        } catch (Exception e) {
+            Log.error("Unable to verify connection with Horreum datastore", e);
+            return false;
+        }
     }
 
     public LabelValueMap getRun(ProjectConfig config, String horreumRunId) {
-
         try (HorreumClient client = createHorreumClient(config)) {
             List<ExportedLabelValues> labelValues = client.runService.getRunLabelValues(Integer.parseInt(horreumRunId), null,
                     null, null, 1000, 0,
@@ -59,16 +61,18 @@ public class HorreumService implements Datastore {
         }
     }
 
+    // FIXME: users should request run for a specific job
     @Override
-    public String getRun(String repo, String horreumRunId) {
+    public String getRun(String repoFullName, String jobId, String horreumRunId) {
 
-        ProjectConfig config = configService.getConfig(repo);
+        ProjectConfig config = configService.getConfig(repoFullName);
         try (HorreumClient client = createHorreumClient(config)) {
             List<ExportedLabelValues> labelValues;
             if (LATEST_RUN.equals(horreumRunId)) {
                 // we need only one run, the latest one
                 // TODO: I should filter runs by pull request id using the filter param
-                labelValues = client.testService.getTestLabelValues(Integer.parseInt(config.horreumTestId), null, null, null,
+                labelValues = client.testService.getTestLabelValues(
+                        Integer.parseInt(config.jobs.get(jobId).datastoreConfig.testId), null, null, null,
                         false, true, "id", "descending", 1, 0, null, null, false);
             } else {
                 labelValues = client.runService.getRunLabelValues(Integer.parseInt(horreumRunId), null, null, null, 1000, 0,
@@ -76,6 +80,7 @@ public class HorreumService implements Datastore {
             }
             // assuming we have one single dataset
             // TODO: implement validation on the result to return meaningful errors in case something is not expected
+            Log.info("Retrieving run " + horreumRunId + " for job " + jobId);
             LabelValueMap labelValueMap = labelValues.getFirst().values;
             return labelValueMapConverter.serialize(labelValueMap);
         }
@@ -83,24 +88,28 @@ public class HorreumService implements Datastore {
 
     /**
      * Compare the provided run against the baseline configured in Horreum
+     *
+     * @param jobId job identifier
      * @param horreumRunId id of the run in Horreum
      */
+    // FIXME: users should request comparison for a specific job
     @Override
-    public String compare(String repo, String horreumRunId) {
-        ProjectConfig config = configService.getConfig(repo);
+    public String compare(String repoFullName, String jobId, String horreumRunId) {
+        ProjectConfig config = configService.getConfig(repoFullName);
         try (HorreumClient client = createHorreumClient(config)) {
             RunService.RunSummary run;
             if (LATEST_RUN.equals(horreumRunId)) {
                 // we need only one run, the latest one
                 // TODO: I should filter runs by pull request id
-                RunService.RunsSummary summary = client.runService.listTestRuns(Integer.parseInt(config.horreumTestId), false,
+                RunService.RunsSummary summary = client.runService.listTestRuns(
+                        Integer.parseInt(config.jobs.get(jobId).datastoreConfig.testId), false,
                         1, 1, "id",
                         SortDirection.Descending);
                 run = summary.runs.getFirst();
             } else {
                 run = client.runService.getRunSummary(Integer.parseInt(horreumRunId));
             }
-            Log.info("Comparing run " + run.id);
+            Log.info("Comparing run " + run.id + " for job " + jobId);
             // assumption that there is only one dataset
             List<ExperimentService.ExperimentResult> comparisonResults = client.experimentService.runExperiments(
                     run.datasets[0]);

@@ -61,6 +61,7 @@ public abstract class BaseAction implements Action {
      */
     @Override
     public void execute(ActionContext<?> ctx) throws IOException {
+        Log.trace("Executing action: " + getName());
         if (ctx != null && !ActionContext.Status.isFailure(ctx.getStatus())) {
             proceed(ctx);
         } else {

@@ -160,7 +160,8 @@ def run = """{
     "APP_PORT": "8081",
     "APP_COMMIT": "dev",
     "REPO_FULL_NAME": "lampajr/webhook-umb-example",
-    "PULL_REQUEST_NUMBER": "1"
+    "PULL_REQUEST_NUMBER": "1",
+    "JOB_ID": "getting-started"
   }
 }
 """
@@ -177,6 +178,21 @@ pipeline {
             defaultValue: '1',
             description: 'Pull request number',
         )
+        string(
+            name: 'REPO_FULL_NAME',
+            defaultValue: 'lampajr/webhook-umb-example',
+            description: 'Repo full name',
+        )
+        string(
+            name: 'APP_COMMIT',
+            defaultValue: 'dev',
+            description: 'Current commit',
+        )
+        booleanParam(
+            name: 'UPLOAD_TO_HORREUM',
+            defaultValue: true,
+            description: 'Push results to Horreum',
+        )
     }
     stages {
         stage('run') {
@@ -189,11 +205,17 @@ pipeline {
         stage('check') {
             steps {
                 script {
+                    sh "jq --version"
+                    sh "cat ${WORKSPACE}/run.json | jq '.state.REPO_FULL_NAME = \"${params.REPO_FULL_NAME}\" | .state.PULL_REQUEST_NUMBER = \"${params.PULL_REQUEST_NUMBER}\" | .state.APP_COMMIT = \"${params.APP_COMMIT}\"' > ${WORKSPACE}/run.json.tmp"
+                    sh "mv ${WORKSPACE}/run.json.tmp ${WORKSPACE}/run.json"
                     sh "cat ${WORKSPACE}/run.json"
                 }
             }
         }
         stage('upload'){
+            when {
+                expression { return params.UPLOAD_TO_HORREUM }
+            }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     horreumUpload (

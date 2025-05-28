@@ -9,14 +9,12 @@
     "barreiro"
   ],
   "datastoreApiKey": "CHANGE_ME_HORREUM_API_KEY",
-  "jobPlatformUser": "admin",
   "jobPlatformApiKey": "CHANGE_ME_JENKINS_API_KEY",
   "jobs": {
-    "getting-started": {
-      "name": "getting-started",
+    "local-test": {
+      "name": "My local test",
       "platformJobId": "getting-started",
       "pullRequestNumberParam": "PULL_REQUEST_NUMBER",
-      "repoFullNameParam": "REPO_FULL_NAME",
       "repoCommitParam": "APP_COMMIT",
       "datastoreConfig": {
         "testId": "10"

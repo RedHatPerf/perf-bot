@@ -34,8 +34,8 @@ public class Help extends BaseAction {
             " * `help`            Show this help message.\n" +
             " * `list`            List all available jobs for this repository.\n" +
             " * `run JOB`         Trigger a remote job based on the repository configuration.\n" +
-            " * `get RUN`         Get the results of a specific execution run.\n" +
-            " * `compare RUN`     Compare a run against the configured baseline.\n" +
+            " * `get JOB RUN`     Get the results of a specific execution run.\n" +
+            " * `compare JOB RUN` Compare a run against the configured baseline.\n" +
             "\n" +
             "**Examples**:\n" +
             " * `" + PROMPT + " run test`\n" +
