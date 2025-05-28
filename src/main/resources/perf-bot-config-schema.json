@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProjectConfig",
+  "description": "Schema for Project Configuration, including job definitions and Horreum integration.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The unique identifier for this configuration. Could be the repository's full name."
+    },
+    "repoFullName": {
+      "type": "string",
+      "description": "The full name of the GitHub repository (e.g., 'owner/repository_name')."
+    },
+    "repositoryUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "The URL of the GitHub repository."
+    },
+    "description": {
+      "type": "string",
+      "description": "A textual description of the project or its configuration."
+    },
+    "authorizedUsers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A list of GitHub usernames authorized to interact with a bot or perform actions."
+    },
+    "datastoreApiKey": {
+      "type": "string",
+      "description": "The API key used for authentication when interacting with the Horreum API. This key grants permission to upload runs, create tests, etc. It should be treated as a secret."
+    },
+    "jobPlatformUser": {
+      "type": "string",
+      "description": "The user used for authentication when interacting with the underlying Jobs platform (e.g., Jenkins)."
+    },
+    "jobPlatformApiKey": {
+      "type": "string",
+      "description": "The API key used for authentication when interacting with the underlying Jobs platform (e.g., Jenkins). Grants permission to trigger jobs and monitor status. It should be treated as a secret."
+    },
+    "jobs": {
+      "type": "object",
+      "description": "A map of all jobs exposed or configured for this project. The key is the job name/identifier.",
+      "additionalProperties": {
+        "$ref": "#/$defs/JobDef"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "repoFullName",
+    "repositoryUrl",
+    "datastoreApiKey",
+    "jobPlatformUser",
+    "jobPlatformApiKey",
+    "jobs"
+  ],
+  "$defs": {
+    "HorreumConfig": {
+      "type": "object",
+      "title": "HorreumConfig",
+      "description": "Configuration settings for interacting with a Horreum instance.",
+      "properties": {
+        "testId": {
+          "type": "string",
+          "description": "The unique identifier (ID or name) of the specific Test definition in Horreum."
+        },
+        "viewId": {
+          "type": "string",
+          "description": "The identifier (ID or name) of a specific Horreum View."
+        }
+      },
+      "required": [
+        "testId"
+      ]
+    },
+    "Param": {
+      "type": "object",
+      "title": "Param",
+      "description": "Definition or metadata for a single configurable parameter of a job.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the configurable parameter."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "JobDef": {
+      "type": "object",
+      "title": "JobDef",
+      "description": "Defines the configuration and properties for a specific job.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The human-readable name of the job."
+        },
+        "platformJobId": {
+          "type": "string",
+          "description": "The identifier of the job within the underlying execution platform."
+        },
+        "pullRequestNumberParam": {
+          "type": ["string", "null"],
+          "description": "Name of the job parameter for the pull request number. Optional."
+        },
+        "repoCommitParam": {
+          "type": ["string", "null"],
+          "description": "Name of the job parameter for the repository commit SHA. Optional."
+        },
+        "datastoreConfig": {
+          "$ref": "#/$defs/HorreumConfig",
+          "description": "Horreum configuration for storing job results. Optional."
+        },
+        "configurableParams": {
+          "type": "object",
+          "description": "A map of additional configurable parameters for the job. Optional.",
+          "additionalProperties": {
+            "$ref": "#/$defs/Param"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "platformJobId"
+      ]
+    }
+  }
+}

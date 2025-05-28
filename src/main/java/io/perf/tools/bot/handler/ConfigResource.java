@@ -45,7 +45,7 @@ public class ConfigResource {
     @ResponseStatus(201)
     @Produces(MediaType.APPLICATION_JSON)
     public void loadProjectConfig(ProjectConfig projectConfig) {
-        Log.info("Loading project config for " + projectConfig.repository);
+        Log.info("Loading project config for " + projectConfig.repositoryUrl);
         configService.loadConfig(projectConfig);
     }
 

@@ -16,8 +16,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.kohsuke.github.GHIssue;
 
-import java.io.IOException;
-
 /**
  * REST resource to handle webhook callbacks from Horreum.
  * <p>
@@ -30,6 +28,7 @@ public class HorreumResource {
 
     private static final String REPO_FULL_NAME_LABEL_VALUE = "pb.repo_full_name";
     private static final String PULL_REQUEST_NUMBER_LABEL_VALUE = "pb.pull_request_number";
+    private static final String JOB_ID_LABEL_VALUE = "pb.job_id";
 
     @ConfigProperty(name = "perf.bot.installation.id")
     Long installationId;
@@ -42,7 +41,6 @@ public class HorreumResource {
 
     @Inject
     ConfigService configService;
-
 
     /**
      * Handles incoming webhook payloads from Horreum.
@@ -62,47 +60,44 @@ public class HorreumResource {
     public void webhook(ObjectNode payload) throws InterruptedException {
         // when a new run is uploaded to Horreum we will check whether we have an existing "start benchmark" event in the queue
         // if so, we will get it and send back the results to the original pull request
-        Log.debug("Received webhook: " + payload.toString());
+        Log.trace("Received webhook: " + payload.toString());
 
         // use this to check whether we have a configuration for that test id, and retrieve the repo full name
         String horreumTestId = payload.get("testid").asText();
         String runId = payload.get("id").asText();
-        ProjectConfig config = configService.getConfigByTestId(horreumTestId);
-        if (config == null) {
-            Log.warn("Config not found for Horreum test id: " + horreumTestId);
-            return;
-        }
-        // the id coincides with the repo full name
-        String repoFullName = config.id;
-        // fetch the Horreum run labelValues limiting the values to the pull request number, repo full name
-        // TODO: we could filter and include only those labels we are interested in
-        Thread.sleep(2000);
-        LabelValueMap labelValueMap = horreumService.getRun(config, runId);
-        // TODO: creating label values is async and could take time - we should not rely on this
-        String runRepoFullName = labelValueMap.get(REPO_FULL_NAME_LABEL_VALUE).asText();
-        int pullRequestNumber = labelValueMap.get(PULL_REQUEST_NUMBER_LABEL_VALUE).asInt();
-
-        if (!repoFullName.equals(runRepoFullName)) {
-            Log.error("Configured repository "  + repoFullName + " does not match Run repo full name: " + runRepoFullName);
-            throw new IllegalArgumentException("Configured repo full name does not match uploaded Run repo full name");
-        }
-
-        StringBuilder comment = new StringBuilder();
         try {
+            ProjectConfig config = configService.getConfigByTestId(horreumTestId);
+            if (config == null) {
+                Log.warn("Config not found for Horreum test id: " + horreumTestId);
+                return;
+            }
+            String repoFullName = config.repoFullName;
+            // fetch the Horreum run labelValues limiting the values to the pull request number, repo full name
+            // TODO: we could filter and include only those labels we are interested in
+            Thread.sleep(2000);
+            LabelValueMap labelValueMap = horreumService.getRun(config, runId);
+            // TODO: creating label values is async and could take time - we should not rely on this
+            String runRepoFullName = labelValueMap.get(REPO_FULL_NAME_LABEL_VALUE).asText();
+            int pullRequestNumber = labelValueMap.get(PULL_REQUEST_NUMBER_LABEL_VALUE).asInt();
+            String jobId = labelValueMap.get(JOB_ID_LABEL_VALUE).asText();
+
+            if (!repoFullName.equals(runRepoFullName)) {
+                Log.error("Configured repository " + repoFullName + " does not match Run repo full name: " + runRepoFullName);
+                throw new IllegalArgumentException("Configured repo full name does not match uploaded Run repo full name");
+            }
+
+            StringBuilder comment = new StringBuilder();
             GHIssue issue = gitHubService.getInstallationClient(installationId).getRepository(repoFullName)
                     .getIssue(pullRequestNumber);
 
             comment.append("## Job results ").append(runId).append("\n");
 
-            comment.append("### Label values").append("\n\n")
-                    .append(horreumService.getRun(repoFullName, runId)).append("\n\n");
-
             comment.append("### Baseline comparison").append("\n\n")
-                    .append(horreumService.compare(repoFullName, runId));
+                    .append(horreumService.compare(repoFullName, jobId, runId));
 
             issue.comment(comment.toString());
-        } catch (IOException e) {
-            Log.error("Error getting issue for " + repoFullName + " - " + pullRequestNumber, e);
+        } catch (Exception e) {
+            Log.error("Error processing Horreum webhook event for test " + horreumTestId + " and run id " + runId, e);
             throw new RuntimeException(e);
         }
     }

@@ -41,14 +41,16 @@ public class Get extends BaseAction {
     }
 
     @Override
-    protected void proceed(ActionContext<?> ctx) throws IOException {
+    protected void proceed(ActionContext<?> ctx) {
         if (ctx.getPayload() instanceof GHEventPayload.IssueComment issueComment) {
             //0: prompt; 1: cmd; [2: run id];
             String[] comment = issueComment.getComment().getBody().split(" ");
-            String runId = comment.length > 2 ? comment[2] : LATEST_RUN;
+            String jobId = comment[2];
+            String runId = comment.length > 3 ? comment[3] : LATEST_RUN;
 
             try {
-                String msg = "## Label values for run " + runId + "\n\n" + datastore.getRun(ctx.getProjectConfig().id, runId);
+                String msg = "## Label values for run " + runId + "\n\n" + datastore.getRun(ctx.getProjectConfig().repoFullName,
+                        jobId, runId);
                 ctx.setStatus(ActionContext.Status.SUCCESS)
                         .setMessage(msg)
                         .setError(null);

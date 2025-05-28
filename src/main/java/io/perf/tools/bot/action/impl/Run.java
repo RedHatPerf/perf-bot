@@ -60,6 +60,10 @@ public class Run extends BaseAction {
                 params.put(job.pullRequestNumberParam, Integer.toString(issueComment.getIssue().getNumber()));
             }
 
+            if (job.repoFullNameParam != null && !job.repoFullNameParam.isBlank()) {
+                params.put(job.repoFullNameParam, ctx.getIssue().getRepository().getFullName());
+            }
+
             if (job.repoCommitParam != null && !job.repoCommitParam.isBlank()) {
                 // TODO: find a way to fetch current commit of the PR
                 params.put(job.repoCommitParam, "");
