@@ -9,6 +9,7 @@ import io.quarkiverse.githubapp.runtime.github.PayloadHelper;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.kohsuke.github.GHCommitPointer;
 import org.kohsuke.github.GHEventPayload;
 
 import java.io.IOException;
@@ -46,13 +47,22 @@ public class Run extends BaseAction {
     }
 
     @Override
-    protected void proceed(ActionContext<?> ctx) throws IOException {
+    protected void proceed(ActionContext<?> ctx) {
         if (ctx.getPayload() instanceof GHEventPayload.IssueComment issueComment) {
             //0: prompt; 1: cmd; 2: test name; 3...: optional args
             String[] comment = issueComment.getComment().getBody().split(" ");
             String testName = comment[2];
 
             JobDef job = ctx.getProjectConfig().jobs.get(testName);
+            if (job == null) {
+                Log.error("Cannot find job " + testName);
+                ctx.setStatus(ActionContext.Status.FAILED)
+                        .setMessage("Cannot find job " + testName)
+                        .setError(new ActionExecutionException(
+                                "Job " + testName + " not found for " + ctx.getProjectConfig().repoFullName, null));
+                return;
+            }
+
             Map<String, String> params = new HashMap<>();
             Matcher matcher = pattern.matcher(issueComment.getComment().getBody());
 
@@ -65,8 +75,15 @@ public class Run extends BaseAction {
             }
 
             if (job.repoCommitParam != null && !job.repoCommitParam.isBlank()) {
-                // TODO: find a way to fetch current commit of the PR
-                params.put(job.repoCommitParam, "");
+                try {
+                    GHCommitPointer commit = ctx.getIssue().getRepository().getPullRequest(ctx.getIssue().getNumber())
+                            .getHead();
+                    params.put(job.repoCommitParam, commit.getSha());
+                } catch (IOException e) {
+                    ctx.setStatus(ActionContext.Status.FAILED)
+                            .setMessage("Failed to execute the job: unable to retrieve pull request HEAD commit")
+                            .setError(new ActionExecutionException("Failed to execute the job", e));
+                }
             }
 
             while (matcher.find()) {
@@ -83,7 +100,8 @@ public class Run extends BaseAction {
             }
 
             try {
-                String location = jobExecutor.buildJob(PayloadHelper.getRepository(issueComment).getFullName(), testName, params);
+                String location = jobExecutor.buildJob(PayloadHelper.getRepository(issueComment).getFullName(), testName,
+                        params);
                 Log.info("Job scheduled to run at: " + location);
                 ctx.setStatus(ActionContext.Status.SUCCESS)
                         .setMessage("Job scheduled to run")

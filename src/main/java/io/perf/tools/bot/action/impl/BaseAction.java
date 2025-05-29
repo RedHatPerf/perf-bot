@@ -61,11 +61,11 @@ public abstract class BaseAction implements Action {
      */
     @Override
     public void execute(ActionContext<?> ctx) throws IOException {
-        Log.trace("Executing action: " + getName());
         if (ctx != null && !ActionContext.Status.isFailure(ctx.getStatus())) {
+            Log.trace("[" + ctx.getPayload().getSender().getLogin() +"] Executing action: " + getName());
             proceed(ctx);
         } else {
-            Log.warn("Skipping action " + getClass().getSimpleName() + " because previous status is failure");
+            Log.warn("Skipping action '" + getName() + "' because previous status is failure");
         }
     }
 
