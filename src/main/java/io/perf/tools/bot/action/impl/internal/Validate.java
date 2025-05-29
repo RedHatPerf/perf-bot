@@ -61,6 +61,7 @@ public class Validate extends BaseAction {
                     .setMessage("Event not supported")
                     .setError(new EventNotSupportedException("Event " + ctx.getPayload().getClass().getSimpleName() + " not supported for " + this.getClass()
                             .getSimpleName(), null));
+            return;
         }
 
         if (ctx.getIssue() != null && !ctx.getIssue().isPullRequest()) {
@@ -69,6 +70,7 @@ public class Validate extends BaseAction {
                     .setError(new ValidationException(
                             "Current issue is not a pull request " + ctx.getIssue().getUrl().toString(),
                             null));
+            return;
         }
 
         String login = ctx.getPayload().getSender().getLogin();
