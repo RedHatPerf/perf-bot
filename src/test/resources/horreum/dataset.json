@@ -1,0 +1,44 @@
+{
+  "access": "PUBLIC",
+  "owner": "dev-team",
+  "start": 1747042093240,
+  "stop": 1747042194031,
+  "id": 1,
+  "runId": 1,
+  "ordinal": 0,
+  "testId": 10,
+  "testname": "getting-started",
+  "description": null,
+  "view": {
+    "1": {
+      "pb.pull_request_number": ""
+    },
+    "2": {
+      "gs.app_commit": "main"
+    },
+    "3": {
+      "gs.max_response_time": 3768319
+    },
+    "4": {
+      "gs.mean_response_time": 792669
+    },
+    "5": {
+      "gs.percentile_99_99": 3768319
+    },
+    "6": {
+      "gs.percentile_99_9": 3162111
+    }
+  },
+  "schemas": [
+    {
+      "id": 1,
+      "name": "Getting Started v0.1",
+      "uri": "uri:getting-started:0.1",
+      "source": 0,
+      "type": 2,
+      "key": "0",
+      "hasJsonSchema": false
+    }
+  ],
+  "validationErrors": null
+}

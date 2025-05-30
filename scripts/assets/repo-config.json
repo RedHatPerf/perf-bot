@@ -19,7 +19,8 @@
       "repoFullNameParam": "REPO_FULL_NAME",
       "repoCommitParam": "APP_COMMIT",
       "datastoreConfig": {
-        "testId": "10"
+        "testId": "10",
+        "viewId": "2"
       },
       "configurableParams": {
         "UPLOAD_TO_HORREUM": {

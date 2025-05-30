@@ -88,6 +88,14 @@
             <artifactId>quarkus-junit5-component</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Java 8 date/time type `java.time.Instant` not supported by default: add Module
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

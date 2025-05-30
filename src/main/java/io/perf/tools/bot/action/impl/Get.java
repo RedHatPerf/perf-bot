@@ -49,7 +49,7 @@ public class Get extends BaseAction {
             String runId = comment.length > 3 ? comment[3] : LATEST_RUN;
 
             try {
-                String msg = "## Label values for run " + runId + "\n\n" + datastore.getRun(ctx.getProjectConfig().repoFullName,
+                String msg = "## Results for run " + runId + "\n\n" + datastore.getRun(ctx.getProjectConfig().repoFullName,
                         jobId, runId);
                 ctx.setStatus(ActionContext.Status.SUCCESS)
                         .setMessage(msg)

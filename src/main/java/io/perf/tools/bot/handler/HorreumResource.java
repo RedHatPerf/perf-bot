@@ -72,11 +72,13 @@ public class HorreumResource {
                 return;
             }
             String repoFullName = config.repoFullName;
-            // fetch the Horreum run labelValues limiting the values to the pull request number, repo full name
-            // TODO: we could filter and include only those labels we are interested in
+
+            // FIXME: atm there is no guarantee that when a Run is upload the label values are immediately available
+            // creating label values is async and could take time - we should not rely on this
+            // TODO: we should probably add a new event in Horreum to subscribe to
             Thread.sleep(2000);
+            // TODO: fetch the Horreum run labelValues limiting the values to the pull request number, repo full name and job id
             LabelValueMap labelValueMap = horreumService.getRun(config, runId);
-            // TODO: creating label values is async and could take time - we should not rely on this
             String runRepoFullName = labelValueMap.get(REPO_FULL_NAME_LABEL_VALUE).asText();
             int pullRequestNumber = labelValueMap.get(PULL_REQUEST_NUMBER_LABEL_VALUE).asInt();
             String jobId = labelValueMap.get(JOB_ID_LABEL_VALUE).asText();
@@ -90,9 +92,11 @@ public class HorreumResource {
             GHIssue issue = gitHubService.getInstallationClient(installationId).getRepository(repoFullName)
                     .getIssue(pullRequestNumber);
 
-            comment.append("## Job results ").append(runId).append("\n");
+            comment.append("## (").append(jobId).append(") Results of run ").append(runId).append("\n");
 
-            comment.append("### Baseline comparison").append("\n\n")
+            comment.append(horreumService.getRun(repoFullName, jobId, runId)).append("\n");
+
+            comment.append("### Experiments").append("\n\n")
                     .append(horreumService.compare(repoFullName, jobId, runId));
 
             issue.comment(comment.toString());

@@ -29,6 +29,14 @@ echo "==== Creating tests ===="
 echo ""
 curl "$API/test/import/" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/test.json
 
+echo "==== Adding default test view ===="
+echo ""
+curl "$API/ui/view/" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/default_view.json
+
+echo "==== Adding additional test view ===="
+echo ""
+curl "$API/ui/view/" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/custom_view.json
+
 echo "==== Uploading run ===="
 echo ""
 curl "$API/run/data?test=${HORREUM_TEST_NAME}&start=$.timestamps.start&stop=$.timestamps.stop&owner=dev-team&access=PUBLIC&schema=${HORREUM_SCHEMA_URI}" -X POST -H 'content-type: application/json' -H "X-Horreum-API-Key: $API_KEY" -d @"$CWD"/baseline_1.json
