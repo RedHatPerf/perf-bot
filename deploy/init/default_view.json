@@ -1,0 +1,43 @@
+{
+  "id": 1,
+  "name": "Default",
+  "testId": 10,
+  "components": [
+    {
+      "id": -1,
+      "headerOrder": 0,
+      "headerName": "PR Number",
+      "labels": [
+        "pb.pull_request_number"
+      ],
+      "render": ""
+    },
+    {
+      "id": -1,
+      "headerOrder": 1,
+      "headerName": "Commit SHA",
+      "labels": [
+        "gs.app_commit"
+      ],
+      "render": ""
+    },
+    {
+      "id": -1,
+      "headerOrder": 2,
+      "headerName": "Max Response Time",
+      "labels": [
+        "gs.max_response_time"
+      ],
+      "render": ""
+    },
+    {
+      "id": -1,
+      "headerOrder": 3,
+      "headerName": "Mean Response Time",
+      "labels": [
+        "gs.mean_response_time"
+      ],
+      "render": ""
+    }
+  ]
+}

@@ -2,6 +2,7 @@ package io.perf.tools.bot.action.impl;
 
 import io.perf.tools.bot.action.Action;
 import io.perf.tools.bot.action.ActionContext;
+import io.quarkiverse.githubapp.runtime.github.PayloadHelper;
 import io.quarkus.logging.Log;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -62,7 +63,8 @@ public abstract class BaseAction implements Action {
     @Override
     public void execute(ActionContext<?> ctx) throws IOException {
         if (ctx != null && !ActionContext.Status.isFailure(ctx.getStatus())) {
-            Log.trace("[" + ctx.getPayload().getSender().getLogin() +"] Executing action: " + getName());
+            Log.trace("[" + PayloadHelper.getRepository(ctx.getPayload()).getFullName() + "] [" + ctx.getPayload().getSender()
+                    .getLogin() + "] Executing action: " + getName());
             proceed(ctx);
         } else {
             Log.warn("Skipping action '" + getName() + "' because previous status is failure");
