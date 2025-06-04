@@ -1,4 +1,4 @@
-package io.perf.tools.bot.model;
+package io.perf.tools.bot.model.config;
 
 /**
  * Configuration settings for interacting with a Horreum instance.

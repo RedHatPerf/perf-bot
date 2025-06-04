@@ -1,6 +1,6 @@
 package io.perf.tools.bot.action;
 
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.ProjectConfig;
 import org.kohsuke.github.GHEventPayload;
 import org.kohsuke.github.GHIssue;
 

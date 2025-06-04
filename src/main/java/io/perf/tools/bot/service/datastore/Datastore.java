@@ -1,6 +1,6 @@
 package io.perf.tools.bot.service.datastore;
 
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.ProjectConfig;
 
 public interface Datastore {
 

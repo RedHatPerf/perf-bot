@@ -5,8 +5,8 @@ import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.helper.JenkinsVersion;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueReference;
-import io.perf.tools.bot.model.JobDef;
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.JobDef;
+import io.perf.tools.bot.model.config.ProjectConfig;
 import io.perf.tools.bot.service.ConfigService;
 import io.perf.tools.bot.service.job.JobExecutor;
 import io.quarkus.logging.Log;
@@ -65,14 +65,16 @@ public class JenkinsService implements JobExecutor {
             JobWithDetails jenkinsJob = jenkinsServer.getJob(jobDef.platformJobId);
 
             QueueReference queueReference;
-
+            // retrieve the next build number for this job
+            int nextBuildNumber = jenkinsJob.getNextBuildNumber();
             if (jobDef.configurableParams.isEmpty()) {
                 queueReference = jenkinsJob.build();
             } else {
                 queueReference = jenkinsJob.build(params);
             }
 
-            return queueReference.getQueueItemUrlPart();
+            Log.debug("Job" + jobId + " queued at " + queueReference.getQueueItemUrlPart());
+            return Integer.toString(nextBuildNumber);
         }
     }
 }

@@ -3,7 +3,7 @@ package io.perf.tools.bot.action.impl;
 import io.perf.tools.bot.action.ActionContext;
 import io.perf.tools.bot.action.exception.ActionExecutionException;
 import io.perf.tools.bot.action.exception.EventNotSupportedException;
-import io.perf.tools.bot.model.JobDef;
+import io.perf.tools.bot.model.config.JobDef;
 import io.perf.tools.bot.service.job.JobExecutor;
 import io.quarkiverse.githubapp.runtime.github.PayloadHelper;
 import io.quarkus.logging.Log;
@@ -100,11 +100,11 @@ public class Run extends BaseAction {
             }
 
             try {
-                String location = jobExecutor.buildJob(PayloadHelper.getRepository(issueComment).getFullName(), testName,
+                String buildNumber = jobExecutor.buildJob(PayloadHelper.getRepository(issueComment).getFullName(), testName,
                         params);
-                Log.info("Job scheduled to run at: " + location);
+                Log.info("Job " + buildNumber + " scheduled to run");
                 ctx.setStatus(ActionContext.Status.SUCCESS)
-                        .setMessage("Job scheduled to run")
+                        .setMessage("Job " + buildNumber + " scheduled to run")
                         .setError(null);
             } catch (Exception e) {
                 Log.error("Failed to build job", e);

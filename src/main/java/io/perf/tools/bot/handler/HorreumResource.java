@@ -2,7 +2,7 @@ package io.perf.tools.bot.handler;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.hyperfoil.tools.horreum.api.data.LabelValueMap;
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.ProjectConfig;
 import io.perf.tools.bot.service.ConfigService;
 import io.perf.tools.bot.service.datastore.horreum.HorreumService;
 import io.quarkiverse.githubapp.runtime.github.GitHubService;

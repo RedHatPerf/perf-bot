@@ -5,7 +5,7 @@ import io.perf.tools.bot.action.ActionContext;
 import io.perf.tools.bot.action.ActionResolver;
 import io.perf.tools.bot.action.impl.internal.Comment;
 import io.perf.tools.bot.action.impl.internal.Validate;
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.ProjectConfig;
 import io.quarkiverse.githubapp.runtime.github.PayloadHelper;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;

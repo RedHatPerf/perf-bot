@@ -1,6 +1,6 @@
 package io.perf.tools.bot.handler;
 
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.ProjectConfig;
 import io.perf.tools.bot.service.ConfigService;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
