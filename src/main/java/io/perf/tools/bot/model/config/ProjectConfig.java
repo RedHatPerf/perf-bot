@@ -1,4 +1,4 @@
-package io.perf.tools.bot.model;
+package io.perf.tools.bot.model.config;
 
 import java.util.ArrayList;
 import java.util.List;

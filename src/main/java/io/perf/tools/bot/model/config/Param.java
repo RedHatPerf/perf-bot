@@ -1,4 +1,4 @@
-package io.perf.tools.bot.model;
+package io.perf.tools.bot.model.config;
 
 /**
  * Represents the definition or metadata for a single configurable parameter of a job.

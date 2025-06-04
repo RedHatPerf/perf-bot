@@ -1,6 +1,6 @@
 package io.perf.tools.bot.service;
 
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.ProjectConfig;
 import io.perf.tools.bot.service.datastore.Datastore;
 import io.perf.tools.bot.service.job.JobExecutor;
 import io.quarkus.logging.Log;

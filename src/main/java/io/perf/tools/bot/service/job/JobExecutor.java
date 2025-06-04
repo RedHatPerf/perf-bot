@@ -1,6 +1,6 @@
 package io.perf.tools.bot.service.job;
 
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.ProjectConfig;
 
 import java.io.IOException;
 import java.util.Map;

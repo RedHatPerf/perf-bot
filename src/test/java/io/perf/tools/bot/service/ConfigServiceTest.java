@@ -1,9 +1,9 @@
 package io.perf.tools.bot.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.perf.tools.bot.model.HorreumConfig;
-import io.perf.tools.bot.model.JobDef;
-import io.perf.tools.bot.model.ProjectConfig;
+import io.perf.tools.bot.model.config.HorreumConfig;
+import io.perf.tools.bot.model.config.JobDef;
+import io.perf.tools.bot.model.config.ProjectConfig;
 import io.perf.tools.bot.service.datastore.Datastore;
 import io.perf.tools.bot.service.job.JobExecutor;
 import io.perf.tools.bot.util.ResourceReader;
