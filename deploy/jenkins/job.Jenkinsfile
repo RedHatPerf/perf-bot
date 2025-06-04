@@ -237,6 +237,9 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: '**/*.json', fingerprint: false
+            script {
+                sh "curl http://local.perf-bot:8081/job -H \"Content-Type: application/json\" -d '{\"jobId\":\"getting-started\",\"buildNumber\":\"$BUILD_NUMBER\",\"repoFullName\":\"${params.REPO_FULL_NAME}\",\"pullRequestNumber\":${params.PULL_REQUEST_NUMBER}}'"
+            }
         }
     }
 }
