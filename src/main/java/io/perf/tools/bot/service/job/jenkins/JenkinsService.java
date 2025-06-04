@@ -3,11 +3,13 @@ package io.perf.tools.bot.service.job.jenkins;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.helper.JenkinsVersion;
+import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueReference;
 import io.perf.tools.bot.model.config.JobDef;
 import io.perf.tools.bot.model.config.ProjectConfig;
 import io.perf.tools.bot.service.ConfigService;
+import io.perf.tools.bot.service.job.BuildStatus;
 import io.perf.tools.bot.service.job.JobExecutor;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -73,8 +75,25 @@ public class JenkinsService implements JobExecutor {
                 queueReference = jenkinsJob.build(params);
             }
 
-            Log.debug("Job" + jobId + " queued at " + queueReference.getQueueItemUrlPart());
+            Log.debug("Job " + jobId + " queued at " + queueReference.getQueueItemUrlPart());
             return Integer.toString(nextBuildNumber);
+        }
+    }
+
+    @Override
+    public BuildStatus getJobStatus(String repoFullName, String jobId, String buildNumber) throws IOException {
+        Log.debug("Getting job " + jobId + " / " + buildNumber);
+        ProjectConfig config = configService.getConfig(repoFullName);
+        if (config == null) {
+            throw new IllegalArgumentException("Config not found with `" + repoFullName + "`");
+        }
+
+        JobDef jobDef = config.jobs.get(jobId);
+        try (JenkinsServer jenkinsServer = createJenkinsServer(config)) {
+            JobWithDetails jenkinsJob = jenkinsServer.getJob(jobDef.platformJobId);
+
+            Build build = jenkinsJob.getBuildByNumber(Integer.parseInt(buildNumber));
+            return BuildStatus.fromJenkins(build.details().getResult());
         }
     }
 }
