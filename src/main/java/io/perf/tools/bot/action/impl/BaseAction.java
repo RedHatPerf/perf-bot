@@ -63,7 +63,7 @@ public abstract class BaseAction implements Action {
     @Override
     public void execute(ActionContext<?> ctx) throws IOException {
         if (ctx != null && !ActionContext.Status.isFailure(ctx.getStatus())) {
-            Log.trace("[" + PayloadHelper.getRepository(ctx.getPayload()).getFullName() + "] [" + ctx.getPayload().getSender()
+            Log.debug("[" + PayloadHelper.getRepository(ctx.getPayload()).getFullName() + "] [" + ctx.getPayload().getSender()
                     .getLogin() + "] Executing action: " + getName());
             proceed(ctx);
         } else {

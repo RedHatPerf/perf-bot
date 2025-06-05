@@ -42,8 +42,6 @@ public class AmqpEventHandler {
     // TODO: Replace hard-coded topic
     @Incoming("amqp-channel")
     public void onComment(String payload) throws IOException {
-        Log.debug("Received AMQP message:\n" + payload);
-
         GitHub github = gitHubService.getInstallationClient(installationId);
         GHEventPayload.IssueComment issueComment = github.parseEventPayload(new StringReader(payload),
                 GHEventPayload.IssueComment.class);

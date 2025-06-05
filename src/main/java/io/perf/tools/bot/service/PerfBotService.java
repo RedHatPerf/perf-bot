@@ -47,11 +47,13 @@ public class PerfBotService {
      * @param issueComment the GitHub issue comment event payload
      */
     public void onGithubComment(GHEventPayload.IssueComment issueComment) {
+        Log.trace("Received issue command: " + issueComment.getComment().getHtmlUrl());
         Action action = actionResolver.getActionFromComment(issueComment.getComment().getBody());
         ProjectConfig config = configService.getConfig(PayloadHelper.getRepository(issueComment).getFullName());
 
         // skip any issue comment action that is not "created", e.g., ignore comment deletion
         if (action != null && ISSUE_COMMENT_CREATE_ACTION.equalsIgnoreCase(issueComment.getAction())) {
+            Log.trace("Received issue command: " + issueComment.getComment().getBody());
             ActionContext<GHEventPayload.IssueComment> ctx = new ActionContext<>(issueComment, config);
             executeCommand(action, ctx);
         }
